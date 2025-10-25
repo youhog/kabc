@@ -29,6 +29,7 @@
             let bullets = [];
             let enemies = [];
             let effects = [];
+            let score = 0;
 
             window.addEventListener("keydown",e=>{
                 if(e.key === "ArrowLeft") keys.left = true;
@@ -90,13 +91,24 @@
 
             function spawnEnemy() {
                 const strongCount = enemies.filter(e => e.color === "red").length;
+                const greenCount = enemies.filter(e => e.color === "green").length;
                 const canSpawnStrong = strongCount < 3;
-                const isStrong = Math.random() < 0.3 && canSpawnStrong;
-                const width = isStrong ? 60 : 40;
-                const height = isStrong ? 60 : 40;
-                const color = isStrong ? "red" : "yellow";
-                const health = isStrong ? 8 : 3;
-                const speed = isStrong ? 0.33 : 1.0;
+                const canSpawnGreen = greenCount < 1;
+                const rand = Math.random();
+                let type;
+                if(rand < 0.2 && canSpawnGreen) type = "green";
+                else if(rand < 0.5 && canSpawnStrong) type = "red";
+                else type = "yellow";
+                let width, height, color, speed, health;
+                if(type === "red") {
+                    width = 60; height = 60; color = "red"; speed = 0.33; health = 8;
+                }
+                else if(type === "green") {
+                    width = 25; height = 25; color = "green"; speed = 0.5; health = 1;
+                }
+                else {
+                    width = 40; height = 40; color = "yellow"; speed = 1; health = 3;
+                }
                 enemies.push({
                     x: Math.random() * (canvas.width - width),
                     y: -height,
@@ -106,7 +118,8 @@
                     speed: speed,
                     health: health,
                     flash: 0,
-                    scale: 1
+                    scale: 1,
+                    dir: Math.random() < 0.5 ? -1 : 1,
                 });
             }
 
@@ -135,6 +148,12 @@
             function updateEnemies() {
                 enemies.forEach((enemy, index) => {
                     enemy.y += enemy.speed;
+                    if(enemy.color === "green") {
+                        enemy.x += enemy.dir * 4;
+                        if(enemy.x <= 0 || enemy.x + enemy.width >= canvas.width) {
+                            enemy.dir *= -1;
+                        }
+                    }
                     if(enemy.y > canvas.height) {
                         enemies.splice(index, 1);
                     }
@@ -173,6 +192,9 @@
                             }
 
                             if(enemy.health <= 0) {
+                                if(enemy.color === "red") score += 300;
+                                else if(enemy.color === "yellow") score += 100;
+                                else if(enemy.color === "green") score += 400;
                                 effects.push({
                                     x: enemy.x + enemy.width / 2,
                                     y: enemy.y + enemy.height / 2,
@@ -213,6 +235,9 @@
                 drawPlayer();
                 drawEnemies();
                 drawEffects();
+                ctx.fillStyle = "white";
+                ctx.font = "20px Arial";
+                ctx.fillText("Score: " + score, 10, 30);
 
                 requestAnimationFrame(update);
             }
@@ -225,4 +250,3 @@
         </script>
     </body>
 </html>
-
