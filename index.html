@@ -5,7 +5,7 @@
         <style>
             canvas {
                 background:black;
-                display:block;
+                display: block;
                 margin: 0 auto;
             }
         </style>
@@ -95,7 +95,7 @@
                 const width = isStrong ? 60 : 40;
                 const height = isStrong ? 60 : 40;
                 const color = isStrong ? "red" : "yellow";
-                const health = isStrong ? 6 : 3;
+                const health = isStrong ? 8 : 3;
                 const speed = isStrong ? 0.33 : 1.0;
                 enemies.push({
                     x: Math.random() * (canvas.width - width),
@@ -122,7 +122,13 @@
                     ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
                     if(enemy.flash > 0) enemy.flash--;
                     ctx.restore();
-                    if(enemy.scale > 1) enemy.scale -= 0.05;
+                    if(enemy.scale > 1) {
+                        if(enemy.color === "red") {
+                            enemy.scale -= 0.02;
+                        } else {
+                            enemy.scale -= 0.05;
+                        }
+                    }
                 });
             }
 
