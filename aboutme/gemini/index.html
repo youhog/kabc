@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式自我介紹 - 您的數位遊樂場</title>
+    
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 引入 Inter 字體 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+    </style>
+    
+    <!-- Tailwind 配置，包含自定義顏色和動畫 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // 您的配色方案
+                        'cta': '#D68A7A',        // D68A7A 橘粉/主要行動呼籲
+                        'secondary-bg': '#E7BE8E', // E7BE8E 米黃/輔助區塊背景
+                        'bg-main': '#DAD6C6',    // DAD6C6 淺灰/主背景
+                        'accent': '#BFA8E1',     // BFA8E1 淺紫/強調裝飾
+                        // 文字顏色優化：選用更深的青綠色，確保對比度 (原色: #64979C)
+                        'text-main': '#4B7478',  
+                    },
+                    keyframes: {
+                        pulse_h1: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.03)' },
+                        },
+                        float_shape: {
+                            '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+                            '50%': { transform: 'translate(15px, 20px) rotate(5deg)' },
+                        },
+                        // 新增：用於按鈕按下效果
+                        press: {
+                            '0%, 100%': { transform: 'translateY(0)', boxShadow: '0 12px 0 var(--tw-shadow-color)' },
+                            '50%': { transform: 'translateY(2px)', boxShadow: '0 8px 0 var(--tw-shadow-color)' },
+                        }
+                    },
+                    animation: {
+                        'pulse-h1': 'pulse_h1 1.5s infinite alternate',
+                        'float-shape-18': 'float_shape 18s infinite ease-in-out alternate',
+                        'float-shape-20': 'float_shape 20s infinite ease-in-out alternate',
+                        'float-shape-25': 'float_shape 25s infinite ease-in-out alternate',
+                        'press-cta': 'press 0.2s ease-in-out',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 基礎樣式重置 (Tailwind 不包含的部分) */
+        * {
+            cursor: none;
+            /* 設置基礎過渡，確保平滑動畫。 */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 2. 自定義游標 (Custom Cursor) - 保持 custom CSS 實現 fixed 定位和圓形 */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 9999;
+            transform: translate(-50%, -50%); 
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #D68A7A; /* 使用 cta 顏色 */
+        }
+
+        .cursor-outline {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #BFA8E1; /* 使用 accent 顏色 */
+            opacity: 0.6;
+            transition: width 0.3s, height 0.3s, background-color 0.3s, opacity 0.3s;
+        }
+
+        /* 互動元素懸停時的游標放大效果 (強化反饋) */
+        .interactive:hover ~ .cursor-outline {
+            width: 50px; 
+            height: 50px;
+            background-color: #D68A7A; /* 使用 CTA 色讓反饋更強烈 */
+            opacity: 0.2;
+        }
+
+        /* 4. 裝飾性背景元素 (Decorative Background Elements) */
+        .decorative-shape {
+            position: fixed;
+            z-index: -1; 
+            opacity: 0.5;
+            border-radius: 50%;
+            filter: blur(50px); 
+        }
+
+        /* 進入動畫 CSS (Entrance Animation CSS) */
+        .animate-item {
+            opacity: 0;
+            transform: translateY(30px);
+            /* 調整過渡函數為 cubic-bezier，讓進入動畫更柔和 */
+            transition: opacity 1.2s cubic-bezier(0.19, 1, 0.22, 1), transform 1.2s cubic-bezier(0.19, 1, 0.22, 1); 
+        }
+
+        /* 設置動畫錯開 (Staggering) - 透過 transition-delay 實現 */
+        .animate-item.delay-1 { transition-delay: 0.1s; }
+        .animate-item.delay-2 { transition-delay: 0.3s; }
+        .animate-item.delay-3 { transition-delay: 0.5s; }
+        .animate-item.delay-4 { transition-delay: 0.7s; }
+        .animate-item.delay-5 { transition-delay: 0.9s; }
+
+        /* 當區塊可見時，應用動畫最終狀態 */
+        .section-visible .animate-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 響應式設計：手機上隱藏自定義游標和裝飾元素 */
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline, .decorative-shape {
+                display: none;
+            }
+            body {
+                cursor: auto; 
+            }
+            /* 手機版導航欄 - 底部固定 */
+            .navbar {
+                top: auto;
+                bottom: 0;
+                border-radius: 2rem 2rem 0 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bg-main text-text-main font-sans text-xl leading-relaxed">
+
+    <!-- 自定義游標元素 -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- 裝飾性背景元素 - 使用 Tailwind utility class 應用顏色和自定義動畫 -->
+    <div class="decorative-shape bg-accent w-[300px] h-[300px] top-[15vh] -left-24 animation-float-shape-18 animate-float-shape-18" style="animation-delay: -2s;"></div>
+    <div class="decorative-shape bg-secondary-bg w-[150px] h-[150px] bottom-[5vh] right-12 animation-float-shape-20 animate-float-shape-20"></div>
+    <div class="decorative-shape bg-cta w-[400px] h-[400px] top-[50vh] -right-48 opacity-20 animation-float-shape-25 animate-float-shape-25" style="animation-delay: -5s;"></div>
+
+    <!-- 導航欄 - 現代化設計：底部圓角浮動 (適用於移動端)，桌面端居中上方 -->
+    <nav class="navbar fixed top-0 left-0 w-full flex justify-center py-4 bg-bg-main/90 backdrop-blur-md z-50 shadow-2xl md:top-0 md:bottom-auto">
+        <a href="#home" class="nav-link active interactive text-text-main hover:text-white hover:bg-text-main hover:shadow-[0_4px_0_theme(colors.cta)] hover:-translate-y-0.5 relative px-4 py-2 font-medium rounded-full transition-all duration-300" data-section="home">🏠 首頁</a>
+        <a href="#about" class="nav-link interactive text-text-main hover:text-white hover:bg-text-main hover:shadow-[0_4px_0_theme(colors.cta)] hover:-translate-y-0.5 relative px-4 py-2 font-medium rounded-full transition-all duration-300" data-section="about">🙋 關於我</a>
+        <a href="#portfolio" class="nav-link interactive text-text-main hover:text-white hover:bg-text-main hover:shadow-[0_4px_0_theme(colors.cta)] hover:-translate-y-0.5 relative px-4 py-2 font-medium rounded-full transition-all duration-300" data-section="portfolio">💼 作品集</a>
+        <a href="#contact" class="nav-link interactive text-text-main hover:text-white hover:bg-text-main hover:shadow-[0_4px_0_theme(colors.cta)] hover:-translate-y-0.5 relative px-4 py-2 font-medium rounded-full transition-all duration-300" data-section="contact">📬 聯繫我</a>
+    </nav>
+
+    <!-- 1. 首頁 (Home) - 增強背景柔和紋理 -->
+    <section id="home" class="min-h-screen pt-32 pb-12 flex flex-col justify-center items-center text-center relative overflow-hidden bg-bg-main px-4 
+        bg-[radial-gradient(ellipse_at_top,_var(--tw-color-secondary-bg)_20%,_var(--tw-color-bg-main)_80%)]">
+        <h1 class="animate-item delay-1 text-cta font-extrabold text-[clamp(2.5rem,6vw,4.5rem)] leading-tight mb-5 
+            shadow-[12px_12px_0_theme(colors.accent)] animate-pulse-h1 transition-all duration-500">Hello, 我是 [您的名字]</h1>
+        <p class="animate-item delay-2 max-w-3xl text-lg lg:text-xl">一位熱愛創造、追求完美像素的數位工匠。歡迎來到我的個人網站，一個結合了柔和色彩與現代互動設計的空間。</p>
+        <!-- CTA 陰影和彈跳效果增強 -->
+        <a href="#about" class="cta-button animate-item delay-3 interactive inline-block px-8 py-3 bg-cta text-white font-bold rounded-full mt-10 text-xl border-2 border-cta 
+            shadow-[0_12px_0_theme(colors.text-main)] hover:shadow-[0_6px_0_theme(colors.text-main)] hover:translate-y-1 active:translate-y-2 transition-all duration-300">開始探索 (點擊我!)</a>
+    </section>
+
+    <!-- 2. 關於我 (About Me) - 增強背景斜線紋理 -->
+    <section id="about" class="min-h-screen pt-32 pb-12 flex flex-col justify-center items-center text-center relative overflow-hidden bg-secondary-bg px-4
+        bg-[repeating-linear-gradient(45deg,_var(--tw-color-secondary-bg),_var(--tw-color-secondary-bg)_10px,_rgba(255,255,255,0.2)_10px,_rgba(255,255,255,0.2)_20px)]">
+        <h2 class="animate-item delay-1 text-text-main font-extrabold text-[clamp(1.8rem,4vw,3rem)] mb-5">我的故事與核心價值</h2>
+        <p class="animate-item delay-2 max-w-3xl text-lg lg:text-xl">我認為設計不僅是美學，更是解決問題。透過前端技術，我將抽象的點子轉化為具體、流暢、愉悅的用戶體驗。</p>
+        
+        <div class="card-container flex flex-wrap justify-center gap-8 mt-12">
+            <!-- 卡片設計升級：柔和陰影 -->
+            <div class="card animate-item delay-3 interactive w-[clamp(250px,40vw,320px)] bg-white p-6 rounded-3xl 
+                shadow-[0_10px_20px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(255,255,255,0.6)_inset] hover:scale-105 hover:shadow-xl hover:shadow-cta/30 hover:rotate-1">
+                <h3 class="text-text-main font-bold mb-2">熱情所在 (Passion)</h3>
+                <p class="text-base text-text-main/80">專注於互動設計和流暢的用戶介面 (UI/UX)。</p>
+            </div>
+            <div class="card animate-item delay-4 interactive w-[clamp(250px,40vw,320px)] bg-white p-6 rounded-3xl 
+                shadow-[0_10px_20px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(255,255,255,0.6)_inset] hover:scale-105 hover:shadow-xl hover:shadow-cta/30 hover:-rotate-1">
+                <h3 class="text-text-main font-bold mb-2">技能樹 (Skills)</h3>
+                <p class="text-base text-text-main/80">HTML/CSS (100%), JavaScript/React (90%), 動畫設計 (80%)。</p>
+            </div>
+            <div class="card animate-item delay-5 interactive w-[clamp(250px,40vw,320px)] bg-white p-6 rounded-3xl 
+                shadow-[0_10px_20px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(255,255,255,0.6)_inset] hover:scale-105 hover:shadow-xl hover:shadow-cta/30 hover:rotate-1">
+                <h3 class="text-text-main font-bold mb-2">我的目標 (Goal)</h3>
+                <p class="text-base text-text-main/80">創造出讓人一見難忘、且使用起來輕鬆舒適的網頁產品。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 作品集 (Portfolio) -->
+    <section id="portfolio" class="min-h-screen pt-32 pb-12 flex flex-col justify-center items-center text-center relative overflow-hidden bg-bg-main px-4">
+        <h2 class="animate-item delay-1 text-text-main font-extrabold text-[clamp(1.8rem,4vw,3rem)] mb-5">精選專案展示</h2>
+        <p class="animate-item delay-2 max-w-3xl text-lg lg:text-xl">以下是我對您的配色方案和現代風格的實踐範例。每個卡片都代表一個創意和技術的結合。</p>
+        
+        <div class="card-container flex flex-wrap justify-center gap-8 mt-12">
+            <!-- 卡片設計升級：柔和陰影 -->
+            <div class="project-card card animate-item delay-3 interactive w-[clamp(250px,40vw,320px)] bg-white p-6 rounded-3xl 
+                shadow-[0_10px_20px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(255,255,255,0.6)_inset] hover:scale-105 hover:shadow-xl hover:shadow-accent/30 hover:rotate-1">
+                <h3 class="text-text-main font-bold mb-2">專案 A：色彩管理工具</h3>
+                <p class="project-description text-base text-text-main/80">應用現代色彩學、響應式排版和柔和配色，創造視覺舒適的體驗。</p>
+                <div class="mt-4">
+                    <!-- LLM 功能按鈕 -->
+                    <button id="polish-button-1" data-project="色彩管理工具" data-details="應用現代色彩學、響應式排版和柔和配色，創造視覺舒適的體驗。"
+                        class="polish-button interactive text-xs font-semibold px-4 py-2 rounded-full border border-cta text-cta hover:bg-cta hover:text-white transition-all duration-300">
+                        ✨ 潤飾描述
+                    </button>
+                    <!-- 載入指示器 -->
+                    <div id="loading-spinner-1" class="hidden mt-2 text-sm text-cta">... AI 正在潤飾中</div>
+                </div>
+            </div>
+            
+            <div class="project-card card animate-item delay-4 interactive w-[clamp(250px,40vw,320px)] bg-white p-6 rounded-3xl 
+                shadow-[0_10px_20px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(255,255,255,0.6)_inset] hover:scale-105 hover:shadow-xl hover:shadow-accent/30 hover:-rotate-1">
+                <h3 class="text-text-main font-bold mb-2">專案 B：動畫故事網頁</h3>
+                <p class="text-base text-text-main/80">利用流暢的動畫和視覺衝擊力，突出主題。</p>
+            </div>
+        </div>
+        
+        <!-- CTA 陰影和彈跳效果增強 -->
+        <a href="#" class="cta-button animate-item delay-5 interactive inline-block px-8 py-3 bg-accent border-accent text-white font-bold rounded-full mt-10 text-xl 
+            shadow-[0_12px_0_theme(colors.text-main)] hover:shadow-[0_6px_0_theme(colors.text-main)] hover:translate-y-1 active:translate-y-2 transition-all duration-300">查看更多作品</a>
+    </section>
+
+    <!-- 4. 聯繫我 (Contact) -->
+    <section id="contact" class="min-h-screen pt-32 pb-12 flex flex-col justify-center items-center text-center relative overflow-hidden bg-accent text-white px-4">
+        <h2 class="animate-item delay-1 text-white font-extrabold text-[clamp(1.8rem,4vw,3rem)] mb-5">期待與您交流！</h2>
+        <p class="animate-item delay-2 max-w-3xl text-lg lg:text-xl text-white/90">無論是工作邀約、合作機會，或是單純的技術交流，請隨時聯繫我。</p>
+        
+        <!-- 聯繫按鈕 (優化對比度 & 彈跳效果增強) -->
+        <a href="mailto:your.email@example.com" class="cta-button animate-item delay-3 interactive text-white bg-transparent border-white font-bold rounded-full text-xl 
+            shadow-[0_12px_0_rgba(255,255,255,0.4)] hover:shadow-[0_6px_0_rgba(255,255,255,0.4)] hover:translate-y-1 active:translate-y-2 transition-all duration-300">發送郵件</a>
+    </section>
+
+    <script>
+        // -----------------------------------------------------
+        // JavaScript 增強與互動邏輯
+        // -----------------------------------------------------
+
+        // 引入 Firebase Config 確保 LLM API 可以正確運作
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const apiKey = firebaseConfig.geminiApiKey || "";
+
+        /**
+         * LLM API Call: 專案描述潤飾
+         */
+        async function polishDescription(project, details, targetElement, loadingElement) {
+            loadingElement.classList.remove('hidden');
+            targetElement.innerHTML = `<span class="italic text-text-main/60">... AI 正在為 ${project} 撰寫精彩文案 ...</span>`;
+
+            const systemPrompt = "你是一位頂尖的行銷文案專家，專門為數位產品撰寫簡潔且引人注目的描述。請根據提供的專案名稱和細節，以繁體中文生成一段 2-3 句的精煉描述，突出其價值和優勢。描述內容必須活潑且現代。";
+            const userQuery = `專案名稱: ${project}。細節: ${details}。請為這個專案撰寫一段富有魅力的介紹。`;
+            
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                // 減少生成長度，確保簡潔
+                config: { maxOutputTokens: 200 } 
+            };
+
+            const maxRetries = 5;
+            let currentRetry = 0;
+
+            while (currentRetry < maxRetries) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API response status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "抱歉，AI 暫時無法生成描述。";
+                    
+                    targetElement.innerHTML = text; // 替換為潤飾後的內容
+                    loadingElement.classList.add('hidden');
+                    return; // 成功後退出循環
+
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    currentRetry++;
+                    if (currentRetry < maxRetries) {
+                        const delay = Math.pow(2, currentRetry) * 1000; // 指數退避
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        targetElement.innerHTML = "😭 連接失敗，請稍後再試。";
+                        loadingElement.classList.add('hidden');
+                        return; // 達到最大重試次數後退出
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. 自定義游標邏輯 (Custom Cursor Logic) ---
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorOutline = document.querySelector('.cursor-outline');
+            
+            window.addEventListener('mousemove', (e) => {
+                // 更新游標點的位置 (立即)
+                cursorDot.style.left = `${e.clientX}px`;
+                cursorDot.style.top = `${e.clientY}px`;
+                
+                // 更新游標外框的位置 (模擬微小延遲，實現追蹤感)
+                setTimeout(() => {
+                    cursorOutline.style.left = `${e.clientX}px`;
+                    cursorOutline.style.top = `${e.clientY}px`;
+                }, 15); 
+            });
+
+
+            // --- 2. 內部連結平滑滾動 (Smooth Scroll) ---
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 60, // 減去導航欄高度
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // --- 3. 導航欄主動狀態追蹤 & 進入動畫 (Active Nav State & Entrance Animation) ---
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -20% 0px', 
+                threshold: 0 
+            };
+
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    const currentSectionId = entry.target.id;
+                    
+                    if (entry.isIntersecting) {
+                        // 1. 觸發進入動畫
+                        entry.target.classList.add('section-visible');
+
+                        // 2. 更新導航欄主動狀態
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        
+                        // 找到當前區塊對應的導航連結，並添加 active 類
+                        const activeLink = document.querySelector(`.nav-link[data-section="${currentSectionId}"]`);
+                        if (activeLink) {
+                            activeLink.classList.add('active');
+                        }
+
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+            
+            // --- 4. LLM 潤飾按鈕事件監聽 ---
+            document.querySelectorAll('.polish-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const project = button.getAttribute('data-project');
+                    const details = button.getAttribute('data-details');
+                    
+                    // 找到描述元素和載入指示器
+                    const card = button.closest('.project-card');
+                    const descriptionElement = card.querySelector('.project-description');
+                    const loadingSpinner = card.querySelector(`#loading-spinner-${button.id.split('-').pop()}`);
+                    
+                    if (descriptionElement) {
+                        polishDescription(project, details, descriptionElement, loadingSpinner);
+                    }
+                });
+            });
+            
+        });
+    </script>
+</body>
+</html>
