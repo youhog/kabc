@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kabc入口網站</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YYVEG6B1MS"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
         body {
@@ -512,6 +513,17 @@
    </footer>
   </main>
   <script>
+
+   // ====================================================================
+    // 📊 Google Analytics 4 (GA4) 追蹤碼初始化 (修復並放在最前面)
+    // --------------------------------------------------------------------
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    // 💡 注意: 這裡已使用載入 URL 中的 ID，請確認 G-YYVEG6B1MS 是您的正確衡量 ID。
+    gtag('config', 'G-YYVEG6B1MS'); 
+    // ====================================================================
         // 🔒 GitHub 配置 - 團隊協作版本
         const GITHUB_CONFIG = {
             username: 'youhog',        // 🔧 替換成你的 GitHub 用戶名
