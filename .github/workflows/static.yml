@@ -7,8 +7,13 @@ on:
 
   # ✅ 2️⃣ 當特定檔案有變動時自動觸發
   push:
+    branches:
+      - youzih/dev/*
+      - Youzih/dev/*
     paths:
       - 'data/portfolio-data.json'  # 監聽資料檔變更
+      - '.github/workflows/deploy.yml'  # （可選）若你更新工作流程也重新部署
+
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
