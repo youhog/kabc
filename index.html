@@ -167,10 +167,12 @@
             opacity: 1;
         }
         
+        /* [✅ 已修復] 已加入 cursor: pointer !important; */
         .button-modern {
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            cursor: pointer !important; /* <-- [強力修復] 加上 !important */
         }
         
         .button-modern::before {
@@ -398,7 +400,9 @@
      </div>
     </div>
    </div><div class="container mx-auto px-6 pb-20">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto"><div class="nav-card-modern rounded-2xl p-10 card-hover">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
+     
+     <div class="nav-card-modern rounded-2xl p-10 card-hover">
       <div class="text-center">
        <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 icon-glow">
         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -407,13 +411,15 @@
        <h3 class="text-2xl font-bold text-white mb-3">關於我</h3>
        <p class="text-slate-300 mb-6 leading-relaxed">由不同AI助手創建的個人介紹頁面，展現多元化的自我呈現</p>
        <div class="flex flex-wrap justify-center gap-2">
-           <button onclick="event.stopPropagation(); navigateToAI('gemini')" class="button-modern text-xs bg-emerald-500 bg-opacity-20 hover:bg-opacity-30 text-emerald-300 px-4 py-2 rounded-full transition-all duration-300 border border-emerald-500 border-opacity-30">✨ Gemini</button> 
-           <button onclick="event.stopPropagation(); navigateToAI('claude')" class="button-modern text-xs bg-blue-500 bg-opacity-20 hover:bg-opacity-30 text-blue-300 px-4 py-2 rounded-full transition-all duration-300 border border-blue-500 border-opacity-30">🤖 Claude</button> 
-           <button onclick="event.stopPropagation(); navigateToAI('deepseek')" class="button-modern text-xs bg-purple-500 bg-opacity-20 hover:bg-opacity-30 text-purple-300 px-4 py-2 rounded-full transition-all duration-300 border border-purple-500 border-opacity-30">🔮 DeepSeek</button> 
-           <button onclick="event.stopPropagation(); navigateToAI('gpt')" class="button-modern text-xs bg-orange-500 bg-opacity-20 hover:bg-opacity-30 text-orange-300 px-4 py-2 rounded-full transition-all duration-300 border border-orange-500 border-opacity-30">🧠 ChatGPT</button>
+           <button onclick="navigateToAI('gemini')" class="button-modern text-xs bg-emerald-500 bg-opacity-20 hover:bg-opacity-30 text-emerald-300 px-4 py-2 rounded-full transition-all duration-300 border border-emerald-500 border-opacity-30">✨ Gemini</button> 
+           <button onclick="navigateToAI('claude')" class="button-modern text-xs bg-blue-500 bg-opacity-20 hover:bg-opacity-30 text-blue-300 px-4 py-2 rounded-full transition-all duration-300 border border-blue-500 border-opacity-30">🤖 Claude</button> 
+           <button onclick="navigateToAI('deepseek')" class="button-modern text-xs bg-purple-500 bg-opacity-20 hover:bg-opacity-30 text-purple-300 px-4 py-2 rounded-full transition-all duration-300 border border-purple-500 border-opacity-30">🔮 DeepSeek</button> 
+           <button onclick="navigateToAI('gpt')" class="button-modern text-xs bg-orange-500 bg-opacity-20 hover:bg-opacity-30 text-orange-300 px-4 py-2 rounded-full transition-all duration-300 border border-orange-500 border-opacity-30">🧠 ChatGPT</button>
        </div>
       </div>
-     </div><div class="nav-card-modern rounded-2xl p-10 card-hover cursor-pointer" onclick="showPortfolio()">
+     </div>
+
+     <div class="nav-card-modern rounded-2xl p-10 card-hover cursor-pointer" onclick="showPortfolio()">
       <div class="text-center">
        <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 icon-glow">
         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -610,7 +616,7 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', async function() {
-            initializeVisitCounter();
+            initializeVisitCounter(); // [✅ 已修復] 呼叫新版計數器
             await loadPortfolioData();
             checkGitHubConfig();
             
@@ -675,12 +681,38 @@
             }
         }
 
-        // Initialize visit counter
-        function initializeVisitCounter() {
-            const stored = localStorage.getItem('visitCount');
-            visitCount = stored ? parseInt(stored) + 1 : 1;
-            localStorage.setItem('visitCount', visitCount.toString());
-            animateCounter('visit-counter', visitCount);
+        // [✅ 已修復] Initialize visit counter (方案二：第三方 API)
+        async function initializeVisitCounter() {
+            // 1. 定義你的 API 命名空間 (使用 CNAME 檔案中的網域)
+            const namespace = 'kabc.youc.eu.org';
+            const key = 'portal_visits';
+            const apiUrl = `https://api.countapi.xyz/hit/${namespace}/${key}`;
+
+            // 2. 先顯示本地快取的數字，避免載入時顯示 "0"
+            let currentLocalCount = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
+            animateCounter('visit-counter', currentLocalCount);
+
+            try {
+                // 3. 呼叫 API，它會自動+1 並回傳最新總數
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch visit count');
+                }
+                const data = await response.json();
+                const newServerCount = data.value;
+
+                // 4. 更新計數器為 API 回傳的最新數字
+                animateCounter('visit-counter', newServerCount);
+                // 5. 將最新數字存回本地快取
+                localStorage.setItem('visitCount', newServerCount.toString());
+
+            } catch (error) {
+                console.error('CountAPI Error:', error);
+                // 備用機制：如果 API 失敗，就使用本地+1
+                visitCount = currentLocalCount + 1;
+                localStorage.setItem('visitCount', visitCount.toString());
+                animateCounter('visit-counter', visitCount);
+            }
         }
 
         // 🔐 GitHub 認證管理
@@ -1079,11 +1111,14 @@
         // Animate counter
         function animateCounter(elementId, targetValue) {
             const element = document.getElementById(elementId);
-            let current = 0;
-            const increment = targetValue / 50;
+            if (!element) return; // 確保元素存在
+            
+            let current = parseInt(element.textContent) || 0;
+            const increment = (targetValue - current) / 50; // 平滑過渡到目標值
+            
             const timer = setInterval(() => {
                 current += increment;
-                if (current >= targetValue) {
+                if ((increment > 0 && current >= targetValue) || (increment < 0 && current <= targetValue)) {
                     current = targetValue;
                     clearInterval(timer);
                 }
@@ -1112,17 +1147,16 @@
             showNotification(`正在導航到 ${getPageName(page)}...`, 'green');
         }
 
-        // AI selection function - 修正為在當前頁面跳轉
+        // [✅ 已修復] AI selection function - 移除 setTimeout
         function navigateToAI(aiName) {
             const path = PATHS.about[aiName];
             if (path) {
                 // 步驟 1: 顯示通知
                 showNotification(`正在前往 ${getAIName(aiName)} 版本...`, 'blue');
                 
-                // 步驟 2: 改變導航方式，在當前分頁跳轉，不會觸發彈出式視窗阻擋
-                setTimeout(() => {
-                    window.location.href = path; // <--- 關鍵修正：替換 window.open
-                }, 500); // 延遲 500ms 讓通知顯示後再跳轉
+                // 步驟 2: [關鍵修復] 移除 setTimeout，直接導航。
+                // 瀏覽器會攔截不是由「直接點擊」觸發的 window.location 更改。
+                window.location.href = path;
                 
             } else {
                 showNotification(`${getAIName(aiName)} 版本尚未建立`, 'orange');
@@ -1148,9 +1182,18 @@
         function showNotification(message, color = 'green') {
             const notification = document.createElement('div');
             notification.className = 'notification';
+            
+            // 根據顏色決定 Tailwind class
+            const bgColorClass = {
+                'green': 'bg-green-500',
+                'blue': 'bg-blue-500',
+                'orange': 'bg-yellow-500',
+                'red': 'bg-red-500'
+            }[color] || 'bg-gray-500';
+
             notification.innerHTML = `
                 <div class="flex items-center">
-                    <div class="w-4 h-4 bg-${color}-500 rounded-full mr-3 animate-pulse"></div>
+                    <div class="w-4 h-4 ${bgColorClass} rounded-full mr-3 animate-pulse"></div>
                     <span class="text-gray-800 font-medium">${message}</span>
                 </div>
             `;
