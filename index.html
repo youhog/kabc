@@ -1248,6 +1248,7 @@
             document.getElementById('portfolio-modal').style.display = 'none';
         }
 
+        // index.html 內 (替換原有的 renderPortfolio 函式)
         function renderPortfolio() {
             const grid = document.getElementById('portfolio-grid');
             const empty = document.getElementById('empty-portfolio');
@@ -1262,20 +1263,35 @@
             empty.style.display = 'none';
             
             grid.innerHTML = portfolioData.map(project => `
-                <div class="portfolio-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
-                    ${project.image_url ? `<img src="${project.image_url}" alt="${project.title}" class="w-full h-40 object-cover rounded-xl mb-4" onerror="this.style.display='none'">` : ''}
-                    <h3 class="font-bold text-gray-800 mb-3 text-lg">${project.title}</h3>
-                    <p class="text-sm text-gray-600 mb-4 leading-relaxed">${project.description}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full font-medium">${project.category}</span>
-                        <div class="flex gap-3">
-                            <button onclick="showEditProjectForm('${project.id}')" class="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors duration-200">編輯</button>
-                            ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors duration-200">查看 →</a>` : ''}
-                            <button onclick="confirmDelete('${project.id}')" class="text-xs text-red-500 hover:text-red-700 font-medium hover:underline transition-colors duration-200">刪除</button>
-                        </div>
+                <div class="portfolio-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300 relative">
+                    
+                    <div class="absolute top-4 right-4 flex gap-2 z-10">
+                        <button onclick="showEditProjectForm('${project.id}')" 
+                            class="p-2 rounded-full bg-blue-50 hover:bg-blue-200 text-blue-600 transition-colors duration-200" title="編輯作品">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7-3l2 2m-2-2L14 7m-4 4L19 4"/></svg>
+                        </button>
+                        <button onclick="confirmDelete('${project.id}')" 
+                            class="p-2 rounded-full bg-red-50 hover:bg-red-200 text-red-600 transition-colors duration-200" title="刪除作品">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
                     </div>
+
+                    ${project.image_url ? `<img src="${project.image_url}" alt="${project.title}" class="w-full h-40 object-cover rounded-xl mb-4" onerror="this.style.display='none'">` : ''}
+                    
+                    <h3 class="font-bold text-gray-800 mb-1 text-xl pr-12">${project.title}</h3>
+                    <span class="text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full font-medium inline-block mb-3">${project.category}</span>
+                    
+                    <p class="text-sm text-gray-600 mb-4 leading-relaxed">${project.description}</p>
+                    
+                    <div class="mt-4 text-center">
+                        ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer" 
+                            class="w-full inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
+                            前往查看 Demo →
+                        </a>` : `<span class="text-sm text-gray-500">無 Demo 連結</span>`}
+                    </div>
+                    
                     ${deleteConfirmId === project.id ? `
-                        <div class="delete-confirm mt-4">
+                        <div class="delete-confirm mt-4 z-20">
                             <div class="flex items-center gap-2 mb-3">
                                 <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
@@ -1291,7 +1307,6 @@
                 </div>
             `).join('');
         }
-
         // Add project functions
         function showAddProjectForm() {
             // 重置為新增模式 (如果之前是編輯模式)
