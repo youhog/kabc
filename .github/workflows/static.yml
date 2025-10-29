@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: 網頁更新
 
 on:
   # 只允許您從 Actions 頁籤手動運行此工作流程
@@ -25,15 +25,15 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 檢查
         uses: actions/checkout@v4
-      - name: Setup Pages
+      - name: 設定頁面
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+      - name: 上傳
         uses: actions/upload-pages-artifact@v3
         with:
           # 上傳整個儲存庫作為靜態內容
           path: '.'
-      - name: Deploy to GitHub Pages
+      - name: 更新
         id: deployment
         uses: actions/deploy-pages@v4
