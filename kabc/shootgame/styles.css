@@ -1,0 +1,57 @@
+html,
+body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    height: 100vh;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    width: 800px;
+    height: 600px;
+    background: black;
+    display: block;
+    image-rendering: pixelated;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+}
+
+#startScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 600px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Orbitron", sans-serif;
+    z-index: 10;
+}
+
+#startScreen h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: cyan;
+    text-shadow: 0 0 20px cyan;
+}
+
+#startScreen button {
+    font-size: 24px;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 10px;
+    background: cyan;
+    color: black;
+    cursor: pointer;
+    transition: 0.3s;
+}
