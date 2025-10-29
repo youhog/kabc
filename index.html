@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>kabc的入口網站</title>
+  <title>我的入口網站 v12</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
@@ -358,10 +358,10 @@
     <div class="particle" style="left: 90%; width: 4px; height: 4px; animation-delay: 16s;"></div>
    </div><!-- Version Badge -->
    <div class="version-badge">
-    Youzih ✨
+    v12.0 ✨
    </div><!-- Header -->
    <header class="text-center py-16 px-6 relative">
-    <h1 class="text-6xl font-bold text-gradient mb-6 tracking-tight">kabc的入口網站</h1>
+    <h1 class="text-6xl font-bold text-gradient mb-6 tracking-tight">我的入口網站</h1>
     <p class="text-xl text-white opacity-90 max-w-3xl mx-auto leading-relaxed">歡迎來到我的個人數位空間，這裡整合了我所有的重要頁面和創作成果</p>
     <div class="mt-8 flex justify-center">
      <div class="w-24 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 rounded-full"></div>
@@ -425,7 +425,7 @@
        </div>
        <h3 class="text-2xl font-bold text-white mb-3">作品集</h3>
        <p class="text-slate-300 mb-6 leading-relaxed">展示我的專案創作和技術成果，記錄成長軌跡</p>
-       <div class="flex justify-center gap-2"><button onclick="showAddProjectForm()" class="button-modern text-xs bg-green-500 bg-opacity-20 hover:bg-opacity-30 text-green-300 px-4 py-2 rounded-full transition-all duration-300 border border-green-500 border-opacity-30">➕ 新增作品</button> <button onclick="navigateToKabc('aboutme')" class="button-modern text-xs bg-blue-500 bg-opacity-20 hover:bg-opacity-30 text-blue-300 px-4 py-2 rounded-full transition-all duration-300 border border-blue-500 border-opacity-30">📝 關於我</button>
+       <div class="flex justify-center gap-2"><button onclick="showAddProjectForm()" class="button-modern text-xs bg-green-500 bg-opacity-20 hover:bg-opacity-30 text-green-300 px-4 py-2 rounded-full transition-all duration-300 border border-green-500 border-opacity-30">➕ 新增作品</button> <button onclick="navigateToProject('aboutme')" class="button-modern text-xs bg-blue-500 bg-opacity-20 hover:bg-opacity-30 text-blue-300 px-4 py-2 rounded-full transition-all duration-300 border border-blue-500 border-opacity-30">📝 專案作品</button>
        </div>
       </div>
      </div>
@@ -442,11 +442,13 @@
      </div>
      <div class="p-8">
       <div class="mb-6 flex flex-wrap justify-between items-center gap-4">
-       <div class="flex flex-wrap gap-3"><button onclick="showAddProjectForm()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">➕ 新增作品</button> <button onclick="navigateToKabc('aboutme')" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl">📝 關於我</button>
+       <div class="flex flex-wrap gap-3"><button onclick="showAddProjectForm()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">➕ 新增作品</button> <button onclick="navigateToProject('aboutme')" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl">📝 專案作品</button>
        </div>
-       <div class="flex gap-3"><button onclick="showGitHubSettings()" class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
+       <div class="flex gap-3"><button onclick="syncToGitHub()" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-3 rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
          <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-         </svg> GitHub </button> <button onclick="refreshPortfolio()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg">
+         </svg> GitHub 同步 </button> <button onclick="showGitHubSettings()" class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+         </svg> 設置 </button> <button onclick="refreshPortfolio()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg">
          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
          </svg> 重新載入 </button>
        </div>
@@ -483,11 +485,11 @@
        </div>
        <div><label class="block text-sm font-semibold text-gray-700 mb-2">分類</label> <select id="project-category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required> <option value="">選擇分類</option> <option value="網頁設計">網頁設計</option> <option value="程式開發">程式開發</option> <option value="UI/UX設計">UI/UX設計</option> <option value="數據分析">數據分析</option> <option value="遊戲開發">遊戲開發</option> <option value="AI專案">AI專案</option> <option value="其他">其他</option> </select>
        </div>
-       <div><label class="block text-sm font-semibold text-gray-700 mb-2">圖片網址 (選填)</label> <input type="text" id="project-image" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="https://example.com/image.jpg 或 assets/photos/image.jpg">
-        <p class="text-xs text-gray-500 mt-2 bg-gray-50 p-3 rounded-lg">💡 支援完整網址或相對路徑，如：assets/photos/project1.jpg</p>
+       <div><label class="block text-sm font-semibold text-gray-700 mb-2">圖片網址 (選填)</label> <input type="text" id="project-image" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="https://example.com/image.jpg 或 ./images/project1.jpg">
+        <p class="text-xs text-gray-500 mt-2 bg-gray-50 p-3 rounded-lg">💡 支援完整網址或專案內相對路徑，如：./images/project1.jpg 或 ./assets/photos/demo.png</p>
        </div>
-       <div><label class="block text-sm font-semibold text-gray-700 mb-2">展示網址 (選填)</label> <input type="text" id="project-demo" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="https://example.com/demo 或 ./kabc/game/">
-        <p class="text-xs text-gray-500 mt-2 bg-gray-50 p-3 rounded-lg">💡 kabc作品可以填入：./kabc/aboutme/ 或 ./kabc/game/</p>
+       <div><label class="block text-sm font-semibold text-gray-700 mb-2">展示網址 (選填)</label> <input type="text" id="project-demo" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="https://example.com/demo 或 ./projects/game/">
+        <p class="text-xs text-gray-500 mt-2 bg-gray-50 p-3 rounded-lg">💡 專案內作品可以填入：./projects/aboutme/ 或 ./projects/game/ 或 ./demos/calculator/</p>
        </div>
       </div>
       <div class="mt-8 flex gap-4"><button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"> <span class="loading-spinner" style="display: none;"></span> 新增作品 </button> <button type="button" onclick="closeAddProjectForm()" class="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-300 shadow-md hover:shadow-lg">取消</button>
@@ -502,19 +504,21 @@
    <footer class="text-center py-12 px-6 relative">
     <div class="max-w-4xl mx-auto">
      <div class="w-24 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 rounded-full mx-auto mb-6"></div>
-     <p class="text-white opacity-75 text-lg">Youzih© 2025 Kabc's入口網站</p>
+     <p class="text-white opacity-75 text-lg">© 2024 我的入口網站 v12 - 整合所有重要頁面的現代化數位樞紐</p>
      <p class="text-white opacity-50 text-sm mt-2">Powered by Modern Web Technologies ✨</p>
     </div>
    </footer>
   </main>
   <script>
-        // 🔒 GitHub 配置 - 加密安全版本
+        // 🔒 GitHub 配置 - 團隊協作版本
         const GITHUB_CONFIG = {
-            username: 'youhog',        // 🔧 替換成你的 GitHub 用戶名
-            repo: 'kabc',          // 🔧 替換成你的倉庫名稱
-            dataFile: 'portfolio-data.json', // 數據檔案名稱
+            username: 'your-username',        // 🔧 替換成你的 GitHub 用戶名
+            repo: 'your-repo-name',          // 🔧 替換成你的倉庫名稱
+            dataFile: 'data/portfolio-data.json', // 數據檔案路徑 (建議放在 data 資料夾)
+            publicDataUrl: './data/portfolio-data.json', // 公開數據檔案路徑 (用於讀取)
             encryptionKey: null,             // 加密密鑰 (運行時設置)
-            encryptedToken: null             // 加密的 token (運行時設置)
+            encryptedToken: null,            // 加密的 token (運行時設置)
+            sessionUnlocked: false           // 本次會話是否已解鎖
         };
 
         // 🔐 簡單的加密/解密函數 (使用 AES-GCM)
@@ -589,9 +593,11 @@
                 deepseek: './about/deepseek/index.html',
                 gemini: './about/gemini/index.html'
             },
-            kabc: {
-                aboutme: './kabc/aboutme/index.html',
-                game: './kabc/game/index.html'
+            projects: {
+                aboutme: './projects/aboutme/index.html',
+                game: './projects/game/index.html',
+                calculator: './projects/calculator/index.html',
+                portfolio: './projects/portfolio/index.html'
             }
         };
 
@@ -604,19 +610,6 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', async function() {
             initializeVisitCounter();
-            
-            // 檢查是否需要設置 GitHub 同步
-            const githubEnabled = localStorage.getItem('githubSyncEnabled');
-            const hasEncryptedToken = localStorage.getItem('encryptedGitHubToken');
-            
-            // 如果是第一次使用，詢問是否設置 GitHub 同步
-            if (githubEnabled === null) {
-                const setupGitHub = await GitHubAuth.setupEncryption();
-                if (setupGitHub) {
-                    showNotification('🎉 GitHub 同步已設置完成！', 'green');
-                }
-            }
-            
             await loadPortfolioData();
             checkGitHubConfig();
             
@@ -637,35 +630,45 @@
         function checkGitHubConfig() {
             const isConfigured = GITHUB_CONFIG.username !== 'your-username' && 
                                 GITHUB_CONFIG.repo !== 'your-repo-name';
-            const githubEnabled = localStorage.getItem('githubSyncEnabled') === 'true';
+            const dataSource = localStorage.getItem('dataSource') || 'unknown';
             
             const notice = document.getElementById('config-notice');
             if (notice) {
-                if (githubEnabled) {
+                if (dataSource === 'public') {
                     notice.innerHTML = `
-                        <strong>☁️ GitHub 同步已啟用：</strong> 
-                        你的作品數據會安全地同步到 GitHub 倉庫，並使用 AES-256 加密保護！
+                        <strong>🌐 團隊協作模式：</strong> 
+                        正在使用團隊共享的作品集數據，所有成員都能看到最新內容！
+                        <br><small>💡 管理員可以透過 GitHub 同步功能更新共享數據</small>
                     `;
                     notice.style.background = 'linear-gradient(135deg, #d1fae5, #a7f3d0)';
                     notice.style.borderColor = '#10b981';
                     notice.style.color = '#065f46';
-                } else if (!isConfigured) {
+                } else if (dataSource === 'github') {
                     notice.innerHTML = `
-                        <strong>🔒 安全模式：</strong> 
-                        為了保護你的隱私，所有數據都安全保存在本地瀏覽器中！
-                        <br><small>💡 你可以稍後在作品集中設置 GitHub 同步功能</small>
+                        <strong>☁️ GitHub 同步模式：</strong> 
+                        數據已同步到 GitHub，團隊成員將在下次重新載入時看到更新！
+                    `;
+                    notice.style.background = 'linear-gradient(135deg, #dbeafe, #bfdbfe)';
+                    notice.style.borderColor = '#3b82f6';
+                    notice.style.color = '#1e40af';
+                } else if (isConfigured) {
+                    notice.innerHTML = `
+                        <strong>⚙️ 管理員模式：</strong> 
+                        檢測到 GitHub 配置，你可以同步數據供團隊成員使用！
+                        <br><small>💡 點擊「GitHub 同步」按鈕來更新團隊共享數據</small>
                     `;
                     notice.style.background = 'linear-gradient(135deg, #fef3c7, #fde68a)';
                     notice.style.borderColor = '#f59e0b';
                     notice.style.color = '#92400e';
                 } else {
                     notice.innerHTML = `
-                        <strong>⚙️ GitHub 已配置：</strong> 
-                        檢測到 GitHub 配置，你可以在作品集中啟用安全的加密同步功能！
+                        <strong>🔒 本地模式：</strong> 
+                        數據安全保存在本地瀏覽器中，適合個人使用！
+                        <br><small>💡 如需團隊協作，請聯繫管理員設置 GitHub 同步</small>
                     `;
-                    notice.style.background = 'linear-gradient(135deg, #dbeafe, #bfdbfe)';
-                    notice.style.borderColor = '#3b82f6';
-                    notice.style.color = '#1e40af';
+                    notice.style.background = 'linear-gradient(135deg, #f3f4f6, #e5e7eb)';
+                    notice.style.borderColor = '#9ca3af';
+                    notice.style.color = '#374151';
                 }
                 notice.style.display = 'block';
             }
@@ -946,63 +949,52 @@
             }
         }
 
-        // Load portfolio data (加密安全版本 - 支援 GitHub 同步)
+        // Load portfolio data (團隊協作版本 - 優先讀取公開檔案)
         async function loadPortfolioData() {
             try {
                 setLoadingState(true);
                 
-                // 檢查是否啟用 GitHub 同步
-                const githubEnabled = localStorage.getItem('githubSyncEnabled') === 'true';
-                const hasEncryptedToken = localStorage.getItem('encryptedGitHubToken');
+                let portfolioLoaded = false;
                 
-                let githubData = null;
-                let localData = [];
-                
-                // 從本地載入數據
-                const stored = localStorage.getItem('portfolioData');
-                if (stored) {
-                    localData = JSON.parse(stored);
+                // 1. 優先嘗試從專案內的公開檔案載入 (團隊共享數據)
+                try {
+                    const response = await fetch(GITHUB_CONFIG.publicDataUrl);
+                    if (response.ok) {
+                        const publicData = await response.json();
+                        if (publicData && Array.isArray(publicData) && publicData.length > 0) {
+                            portfolioData = publicData;
+                            // 同步到本地快取
+                            localStorage.setItem('portfolioData', JSON.stringify(publicData));
+                            localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
+                            localStorage.setItem('dataSource', 'public');
+                            showNotification(`📂 已載入 ${publicData.length} 個作品 (團隊共享)`, 'green');
+                            portfolioLoaded = true;
+                        }
+                    }
+                } catch (error) {
+                    console.log('公開檔案載入失敗，嘗試其他方式:', error.message);
                 }
                 
-                // 如果啟用 GitHub 同步且有加密 token
-                if (githubEnabled && hasEncryptedToken) {
-                    try {
-                        // 嘗試解鎖並從 GitHub 載入
-                        if (!GITHUB_CONFIG.encryptionKey) {
-                            const token = await GitHubAuth.unlockToken();
-                            if (!token) {
-                                showNotification('GitHub 同步已取消，使用本地數據', 'orange');
-                                portfolioData = localData;
-                                return;
-                            }
-                        }
-                        
-                        githubData = await GitHubAPI.readFromGitHub();
-                        
-                        if (githubData && githubData.length > 0) {
-                            portfolioData = githubData;
-                            // 同步到本地
-                            localStorage.setItem('portfolioData', JSON.stringify(githubData));
-                            localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
-                            showNotification(`☁️ 已從 GitHub 同步 ${githubData.length} 個作品`, 'blue');
-                        } else {
+                // 2. 如果公開檔案載入失敗，嘗試從本地快取載入
+                if (!portfolioLoaded) {
+                    const stored = localStorage.getItem('portfolioData');
+                    if (stored) {
+                        const localData = JSON.parse(stored);
+                        if (localData && localData.length > 0) {
                             portfolioData = localData;
-                            showNotification('📂 GitHub 無數據，使用本地數據', 'orange');
+                            const lastUpdate = localStorage.getItem('portfolioLastUpdate');
+                            const updateTime = lastUpdate ? new Date(lastUpdate).toLocaleString('zh-TW') : '未知';
+                            const dataSource = localStorage.getItem('dataSource') || '本地';
+                            showNotification(`💾 已載入 ${localData.length} 個作品 (${dataSource}快取)`, 'blue');
+                            portfolioLoaded = true;
                         }
-                    } catch (error) {
-                        console.error('GitHub 同步失敗:', error);
-                        portfolioData = localData;
-                        showNotification('❌ GitHub 同步失敗，使用本地數據', 'red');
                     }
-                } else {
-                    portfolioData = localData;
-                    if (portfolioData.length > 0) {
-                        const lastUpdate = localStorage.getItem('portfolioLastUpdate');
-                        const updateTime = lastUpdate ? new Date(lastUpdate).toLocaleString('zh-TW') : '未知';
-                        showNotification(`📂 已載入 ${portfolioData.length} 個作品 (本地)`, 'green');
-                    } else {
-                        showNotification('🎯 準備好新增你的第一個作品了！', 'green');
-                    }
+                }
+                
+                // 3. 如果都沒有數據，初始化空白作品集
+                if (!portfolioLoaded) {
+                    portfolioData = [];
+                    showNotification('🎯 準備好新增你的第一個作品了！', 'green');
                 }
                 
             } catch (error) {
@@ -1015,32 +1007,41 @@
             }
         }
 
-        // Save portfolio data (加密安全版本 - 支援 GitHub 同步)
-        async function savePortfolioData() {
+        // Save portfolio data (團隊協作版本 - 只有管理員才能同步到 GitHub)
+        async function savePortfolioData(forceGitHubSync = false) {
             try {
                 setLoadingState(true);
                 
-                // 總是先保存到本地
+                // 總是先保存到本地快取
                 localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
                 localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
+                localStorage.setItem('dataSource', 'local');
                 
-                // 檢查是否啟用 GitHub 同步
-                const githubEnabled = localStorage.getItem('githubSyncEnabled') === 'true';
-                const hasEncryptedToken = localStorage.getItem('encryptedGitHubToken');
-                
-                if (githubEnabled && hasEncryptedToken) {
+                // 如果強制同步到 GitHub (管理員操作)
+                if (forceGitHubSync) {
                     try {
-                        // 嘗試同步到 GitHub
+                        // 檢查是否已解鎖 GitHub 權限
+                        if (!GITHUB_CONFIG.sessionUnlocked) {
+                            const token = await GitHubAuth.unlockToken();
+                            if (!token) {
+                                showNotification('❌ 需要管理員權限才能同步到 GitHub', 'red');
+                                return false;
+                            }
+                            GITHUB_CONFIG.sessionUnlocked = true;
+                        }
+                        
+                        // 同步到 GitHub
                         await GitHubAPI.writeToGitHub(portfolioData);
-                        showNotification('☁️ 數據已同步到 GitHub 和本地！', 'green');
+                        localStorage.setItem('dataSource', 'github');
+                        showNotification('☁️ 數據已同步到 GitHub！團隊成員將看到更新', 'green');
                         return true;
                     } catch (error) {
                         console.error('GitHub 同步失敗:', error);
-                        showNotification('⚠️ 已保存到本地，但 GitHub 同步失敗', 'orange');
+                        showNotification('⚠️ GitHub 同步失敗: ' + error.message, 'orange');
                         return false;
                     }
                 } else {
-                    showNotification('✅ 數據已安全保存到本地瀏覽器', 'green');
+                    showNotification('✅ 數據已保存到本地快取', 'green');
                     return true;
                 }
                 
@@ -1110,12 +1111,18 @@
             }
         }
 
-        // Navigate to kabc folder items
-        function navigateToKabc(item) {
-            const path = PATHS.kabc[item];
+        // Navigate to project folder items
+        function navigateToProject(item) {
+            const path = PATHS.projects[item];
             if (path) {
-                const itemName = item === 'aboutme' ? '關於我作品' : '遊戲作品';
-                showNotification(`正在前往 ${itemName}...`, item === 'aboutme' ? 'green' : 'purple');
+                const itemNames = {
+                    'aboutme': '關於我作品',
+                    'game': '遊戲作品', 
+                    'calculator': '計算器作品',
+                    'portfolio': '作品集頁面'
+                };
+                const itemName = itemNames[item] || '專案作品';
+                showNotification(`正在前往 ${itemName}...`, 'green');
                 window.open(path, '_blank', 'noopener,noreferrer');
             } else {
                 showNotification(`${item} 頁面尚未建立`, 'orange');
@@ -1479,11 +1486,36 @@
                 localStorage.setItem('githubSyncEnabled', 'false');
                 GITHUB_CONFIG.encryptionKey = null;
                 GITHUB_CONFIG.encryptedToken = null;
+                GITHUB_CONFIG.sessionUnlocked = false;
                 
                 showNotification('🔒 GitHub 同步已停用', 'orange');
                 closeGitHubSettings();
             }
         }
+
+        // 新增 GitHub 同步功能
+        async function syncToGitHub() {
+            const isConfigured = GITHUB_CONFIG.username !== 'your-username' && 
+                                GITHUB_CONFIG.repo !== 'your-repo-name';
+            
+            if (!isConfigured) {
+                showNotification('❌ GitHub 配置未完成，請先在代碼中設置用戶名和倉庫名', 'red');
+                return;
+            }
+            
+            if (portfolioData.length === 0) {
+                showNotification('❌ 沒有數據可以同步', 'orange');
+                return;
+            }
+            
+            const success = await savePortfolioData(true); // 強制同步到 GitHub
+            if (success) {
+                checkGitHubConfig(); // 更新配置狀態顯示
+                if (document.getElementById('portfolio-modal').style.display === 'flex') {
+                    renderPortfolio(); // 更新作品集顯示
+                }
+            }
+        }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99607178c06c843a',t:'MTc2MTcxNzUyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9960da9d24483322',t:'MTc2MTcyMTgzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
