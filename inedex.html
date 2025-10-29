@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="zh-TW">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kabc入口網站</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .solid-bg {
+            background: #1e293b;
+        }
+        
+        .icon-bounce:hover {
+            animation: bounce 0.6s;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0,-8px,0);
+            }
+            70% {
+                transform: translate3d(0,-4px,0);
+            }
+            90% {
+                transform: translate3d(0,-2px,0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-counter {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .stats-card {
+            background: #334155;
+            border: 1px solid #475569;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 50;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+
+        .delete-confirm {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .config-notice {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="min-h-full">
+  <main class="min-h-full solid-bg"><!-- Header -->
+   <header class="text-center py-12 px-6">
+    <h1 class="text-5xl font-bold text-white mb-4">我的入口網站</h1>
+    <p class="text-xl text-white opacity-90 max-w-2xl mx-auto">歡迎來到我的個人網站入口，這裡整合了我所有的重要頁面和服務</p>
+   </header><!-- Statistics -->
+   <div class="container mx-auto px-6 pb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+     <div class="stats-card rounded-xl p-6 text-center text-white pulse-counter">
+      <div class="text-3xl font-bold" id="visit-counter">
+       0
+      </div>
+      <div class="text-sm opacity-80">
+       總訪問次數
+      </div>
+     </div>
+     <div class="stats-card rounded-xl p-6 text-center text-white">
+      <div class="text-3xl font-bold" id="portfolio-count"><span class="loading-spinner" style="display: none;"></span> <span id="count-number">0</span>
+      </div>
+      <div class="text-sm opacity-80">
+       作品數量
+      </div>
+     </div>
+     <div class="stats-card rounded-xl p-6 text-center text-white">
+      <div class="text-3xl font-bold">
+       4
+      </div>
+      <div class="text-sm opacity-80">
+       AI版本
+      </div>
+     </div>
+    </div>
+   </div><!-- Navigation Cards -->
+   <div class="container mx-auto px-6 pb-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"><!-- 關於我 -->
+     <div class="bg-slate-800 rounded-xl p-8 card-hover cursor-pointer fade-in border border-slate-600" onclick="navigateToPage('about')">
+      <div class="text-center">
+       <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 icon-bounce">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+       </div>
+       <h3 class="text-xl font-semibold text-white mb-2">關於我</h3>
+       <p class="text-slate-300 mb-3">由不同AI助手創建的個人介紹頁面</p>
+       <div class="flex flex-wrap justify-center gap-1"><button onclick="navigateToAI('gemini')" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-2 py-1 rounded-full transition-colors duration-200">Gemini</button> <button onclick="navigateToAI('claude')" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded-full transition-colors duration-200">Claude</button> <button onclick="navigateToAI('deepseek')" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 px-2 py-1 rounded-full transition-colors duration-200">DeepSeek</button> <button onclick="navigateToAI('gpt')" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-700 px-2 py-1 rounded-full transition-colors duration-200">ChatGPT</button>
+       </div>
+      </div>
+     </div><!-- 作品集 -->
+     <div class="bg-slate-800 rounded-xl p-8 card-hover cursor-pointer fade-in border border-slate-600" onclick="showPortfolio()">
+      <div class="text-center">
+       <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 icon-bounce">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+       </div>
+       <h3 class="text-xl font-semibold text-white mb-2">作品集</h3>
+       <p class="text-slate-300 mb-3">展示我的專案和創作成果</p>
+       <div class="flex justify-center gap-2"><button onclick="showAddProjectForm()" class="text-xs bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-full transition-colors duration-200">+ 新增作品</button> <button onclick="navigateToKabc('aboutme')" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full transition-colors duration-200">📝 關於我</button> <button onclick="navigateToKabc('game')" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full transition-colors duration-200">🎮 遊戲</button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Portfolio Modal -->
+   <div id="portfolio-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+     <div class="p-6 border-b">
+      <div class="flex justify-between items-center">
+       <h2 class="text-2xl font-bold text-gray-800">我的作品集</h2><button onclick="closePortfolio()" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg></button>
+      </div>
+     </div>
+     <div class="p-6">
+      <div class="mb-4 flex justify-between items-center">
+       <div class="flex gap-2"><button onclick="showAddProjectForm()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200">+ 新增作品</button> <button onclick="navigateToKabc('aboutme')" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors duration-200">📝 關於我</button> <button onclick="navigateToKabc('game')" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors duration-200">🎮 遊戲</button>
+       </div><button onclick="refreshPortfolio()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg> 重新載入 </button>
+      </div>
+      <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Portfolio items will be loaded here -->
+      </div>
+      <div id="empty-portfolio" class="text-center py-12 text-gray-500">
+       <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+       </svg>
+       <p>還沒有作品，點擊「新增作品」開始建立你的作品集！</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Add Project Modal -->
+   <div id="add-project-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content max-w-md">
+     <div class="p-6 border-b">
+      <div class="flex justify-between items-center">
+       <h2 class="text-xl font-bold text-gray-800">新增作品</h2><button onclick="closeAddProjectForm()" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg></button>
+      </div>
+     </div>
+     <form id="add-project-form" class="p-6">
+      <div id="config-notice" class="config-notice"><strong>⚠️ 配置提醒：</strong> 請先在代碼中設定你的 GitHub 資訊才能同步數據！
+      </div>
+      <div class="space-y-4">
+       <div><label class="block text-sm font-medium text-gray-700 mb-1">作品標題</label> <input type="text" id="project-title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+       </div>
+       <div><label class="block text-sm font-medium text-gray-700 mb-1">作品描述</label> <textarea id="project-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+       </div>
+       <div><label class="block text-sm font-medium text-gray-700 mb-1">分類</label> <select id="project-category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required> <option value="">選擇分類</option> <option value="網頁設計">網頁設計</option> <option value="程式開發">程式開發</option> <option value="UI/UX設計">UI/UX設計</option> <option value="數據分析">數據分析</option> <option value="遊戲開發">遊戲開發</option> <option value="其他">其他</option> </select>
+       </div>
+       <div><label class="block text-sm font-medium text-gray-700 mb-1">圖片網址 (選填)</label> <input type="url" id="project-image" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://example.com/image.jpg">
+       </div>
+       <div><label class="block text-sm font-medium text-gray-700 mb-1">展示網址 (選填)</label> <input type="url" id="project-demo" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://example.com/demo 或 ./kabc/game/">
+        <p class="text-xs text-gray-500 mt-1">💡 可以填入相對路徑：./kabc/aboutme/ 或 ./kabc/game/</p>
+       </div>
+      </div>
+      <div class="mt-6 flex gap-3"><button type="submit" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"> <span class="loading-spinner" style="display: none;"></span> 新增作品 </button> <button type="button" onclick="closeAddProjectForm()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200">取消</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Footer -->
+   <footer class="text-center py-8 px-6">
+    <p class="text-white opacity-75">Youzih© kabc入口網站 - 整合所有頁面</p>
+   </footer>
+  </main>
+  <script>
+        // ⚠️ GitHub 配置 - 請替換成你的資訊
+        const GITHUB_CONFIG = {
+            username: 'your-username',        // 🔧 替換成你的 GitHub 用戶名
+            repo: 'your-repo-name',          // 🔧 替換成你的倉庫名稱
+            token: '',                       // 🔧 替換成你的 GitHub Token (可選，用於寫入)
+            dataFile: 'portfolio-data.json'  // 數據檔案名稱
+        };
+
+        // 📁 檔案路徑配置 - 根據你的檔案結構
+        const PATHS = {
+            about: {
+                gpt: './about/gpt/index.html',
+                claude: './about/claude/index.html', 
+                deepseek: './about/deepseek/index.html',
+                gemini: './about/gemini/index.html'
+            },
+            kabc: {
+                aboutme: './kabc/aboutme/index.html',
+                game: './kabc/game/index.html'
+            }
+        };
+
+        // Global variables
+        let portfolioData = [];
+        let visitCount = 0;
+        let deleteConfirmId = null;
+        let isLoading = false;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeVisitCounter();
+            loadPortfolioData();
+            checkGitHubConfig();
+            
+            // Add form event listener
+            document.getElementById('add-project-form').addEventListener('submit', addProject);
+            
+            // Close modals on outside click
+            document.getElementById('portfolio-modal').addEventListener('click', function(e) {
+                if (e.target === this) closePortfolio();
+            });
+            
+            document.getElementById('add-project-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeAddProjectForm();
+            });
+        });
+
+        // Check GitHub configuration
+        function checkGitHubConfig() {
+            const isConfigured = GITHUB_CONFIG.username !== 'your-username' && 
+                                GITHUB_CONFIG.repo !== 'your-repo-name';
+            
+            const notice = document.getElementById('config-notice');
+            if (isConfigured) {
+                notice.style.display = 'none';
+            } else {
+                notice.style.display = 'block';
+            }
+        }
+
+        // Initialize visit counter
+        function initializeVisitCounter() {
+            const stored = localStorage.getItem('visitCount');
+            visitCount = stored ? parseInt(stored) + 1 : 1;
+            localStorage.setItem('visitCount', visitCount.toString());
+            animateCounter('visit-counter', visitCount);
+        }
+
+        // Load portfolio data from GitHub
+        async function loadPortfolioData() {
+            if (GITHUB_CONFIG.username === 'your-username' || GITHUB_CONFIG.repo === 'your-repo-name') {
+                // 配置未完成，使用本地數據
+                const stored = localStorage.getItem('portfolioData');
+                portfolioData = stored ? JSON.parse(stored) : [];
+                updatePortfolioCount();
+                return;
+            }
+
+            try {
+                setLoadingState(true);
+                const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`;
+                
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const content = atob(data.content);
+                    portfolioData = JSON.parse(content);
+                    showNotification('已從 GitHub 載入作品集數據', 'green');
+                } else if (response.status === 404) {
+                    // 檔案不存在，使用空數組
+                    portfolioData = [];
+                    console.log('GitHub 數據檔案不存在，將創建新檔案');
+                } else {
+                    throw new Error(`GitHub API 錯誤: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('載入作品集數據失敗:', error);
+                // 降級到 localStorage
+                const stored = localStorage.getItem('portfolioData');
+                portfolioData = stored ? JSON.parse(stored) : [];
+                showNotification('無法連接到 GitHub，使用本地數據', 'orange');
+            } finally {
+                setLoadingState(false);
+                updatePortfolioCount();
+            }
+        }
+
+        // Save portfolio data to GitHub
+        async function savePortfolioData() {
+            // 先保存到本地作為備份
+            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+
+            if (GITHUB_CONFIG.username === 'your-username' || GITHUB_CONFIG.repo === 'your-repo-name') {
+                showNotification('數據已保存到本地 (請先配置 GitHub 資訊)', 'orange');
+                return false;
+            }
+
+            if (!GITHUB_CONFIG.token) {
+                showNotification('數據已保存到本地 (需要 GitHub Token 才能同步)', 'orange');
+                return false;
+            }
+
+            try {
+                setLoadingState(true);
+                
+                // 先獲取檔案的 SHA (如果存在)
+                const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`;
+                let sha = null;
+                
+                try {
+                    const getResponse = await fetch(getUrl);
+                    if (getResponse.ok) {
+                        const getData = await getResponse.json();
+                        sha = getData.sha;
+                    }
+                } catch (e) {
+                    // 檔案可能不存在，繼續執行
+                }
+
+                // 更新或創建檔案
+                const putUrl = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`;
+                const content = btoa(JSON.stringify(portfolioData, null, 2));
+                
+                const putData = {
+                    message: `更新作品集數據 - ${new Date().toLocaleString('zh-TW')}`,
+                    content: content
+                };
+                
+                if (sha) {
+                    putData.sha = sha;
+                }
+
+                const putResponse = await fetch(putUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_CONFIG.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(putData)
+                });
+
+                if (putResponse.ok) {
+                    showNotification('數據已同步到 GitHub！', 'green');
+                    return true;
+                } else {
+                    throw new Error(`GitHub API 錯誤: ${putResponse.status}`);
+                }
+            } catch (error) {
+                console.error('保存到 GitHub 失敗:', error);
+                showNotification('GitHub 同步失敗，已保存到本地', 'red');
+                return false;
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        // Set loading state
+        function setLoadingState(loading) {
+            isLoading = loading;
+            const spinners = document.querySelectorAll('.loading-spinner');
+            spinners.forEach(spinner => {
+                spinner.style.display = loading ? 'inline-block' : 'none';
+            });
+        }
+
+        // Animate counter
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            let current = 0;
+            const increment = targetValue / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetValue) {
+                    current = targetValue;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 50);
+        }
+
+        // Update portfolio count
+        function updatePortfolioCount() {
+            const countElement = document.getElementById('count-number');
+            if (countElement) {
+                animateCounter('count-number', portfolioData.length);
+            }
+        }
+
+        // Refresh portfolio data
+        async function refreshPortfolio() {
+            await loadPortfolioData();
+            if (document.getElementById('portfolio-modal').style.display === 'flex') {
+                renderPortfolio();
+            }
+        }
+
+        // Navigation function
+        function navigateToPage(page) {
+            showNotification(`正在導航到 ${getPageName(page)}...`, 'green');
+        }
+
+        // AI selection function
+        function navigateToAI(aiName) {
+            const path = PATHS.about[aiName];
+            if (path) {
+                showNotification(`正在前往 ${getAIName(aiName)} 版本...`, 'blue');
+                // 在新分頁開啟，避免離開主頁
+                window.open(path, '_blank', 'noopener,noreferrer');
+            } else {
+                showNotification(`${getAIName(aiName)} 版本尚未建立`, 'orange');
+            }
+        }
+
+        // Navigate to kabc folder items
+        function navigateToKabc(item) {
+            const path = PATHS.kabc[item];
+            if (path) {
+                const itemName = item === 'aboutme' ? '關於我作品' : '遊戲作品';
+                showNotification(`正在前往 ${itemName}...`, item === 'aboutme' ? 'green' : 'purple');
+                window.open(path, '_blank', 'noopener,noreferrer');
+            } else {
+                showNotification(`${item} 頁面尚未建立`, 'orange');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, color = 'green') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-${color}-500 rounded-full mr-3"></div>
+                    <span class="text-gray-800">${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Portfolio functions
+        function showPortfolio() {
+            document.getElementById('portfolio-modal').style.display = 'flex';
+            renderPortfolio();
+        }
+
+        function closePortfolio() {
+            document.getElementById('portfolio-modal').style.display = 'none';
+        }
+
+        function renderPortfolio() {
+            const grid = document.getElementById('portfolio-grid');
+            const empty = document.getElementById('empty-portfolio');
+            
+            if (portfolioData.length === 0) {
+                grid.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            empty.style.display = 'none';
+            
+            grid.innerHTML = portfolioData.map(project => `
+                <div class="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                    ${project.image_url ? `<img src="${project.image_url}" alt="${project.title}" class="w-full h-32 object-cover rounded-md mb-3" onerror="this.style.display='none'">` : ''}
+                    <h3 class="font-semibold text-gray-800 mb-2">${project.title}</h3>
+                    <p class="text-sm text-gray-600 mb-2">${project.description}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">${project.category}</span>
+                        <div class="flex gap-2">
+                            ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline">查看</a>` : ''}
+                            <button onclick="confirmDelete('${project.id}')" class="text-xs text-red-600 hover:underline">刪除</button>
+                        </div>
+                    </div>
+                    ${deleteConfirmId === project.id ? `
+                        <div class="delete-confirm">
+                            確定要刪除這個作品嗎？
+                            <div class="mt-2">
+                                <button onclick="deleteProject('${project.id}')" class="text-xs bg-red-600 text-white px-2 py-1 rounded mr-2">確定刪除</button>
+                                <button onclick="cancelDelete()" class="text-xs bg-gray-300 text-gray-700 px-2 py-1 rounded">取消</button>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Add project functions
+        function showAddProjectForm() {
+            document.getElementById('add-project-modal').style.display = 'flex';
+        }
+
+        function closeAddProjectForm() {
+            document.getElementById('add-project-modal').style.display = 'none';
+            document.getElementById('add-project-form').reset();
+        }
+
+        async function addProject(event) {
+            event.preventDefault();
+            
+            if (isLoading) return;
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '新增中...';
+            submitBtn.disabled = true;
+            
+            const projectData = {
+                id: Date.now().toString(),
+                title: document.getElementById('project-title').value,
+                description: document.getElementById('project-description').value,
+                category: document.getElementById('project-category').value,
+                image_url: document.getElementById('project-image').value || '',
+                demo_url: document.getElementById('project-demo').value || '',
+                created_date: new Date().toISOString()
+            };
+            
+            portfolioData.push(projectData);
+            const success = await savePortfolioData();
+            updatePortfolioCount();
+            
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            
+            closeAddProjectForm();
+            showNotification(success ? '作品新增並同步成功！' : '作品已新增到本地', success ? 'green' : 'orange');
+            
+            // Update portfolio view if it's open
+            if (document.getElementById('portfolio-modal').style.display === 'flex') {
+                renderPortfolio();
+            }
+        }
+
+        function confirmDelete(projectId) {
+            deleteConfirmId = projectId;
+            renderPortfolio();
+        }
+
+        function cancelDelete() {
+            deleteConfirmId = null;
+            renderPortfolio();
+        }
+
+        async function deleteProject(projectId) {
+            if (isLoading) return;
+            
+            portfolioData = portfolioData.filter(project => project.id !== projectId);
+            const success = await savePortfolioData();
+            updatePortfolioCount();
+            deleteConfirmId = null;
+            
+            showNotification(success ? '作品已刪除並同步' : '作品已從本地刪除', success ? 'green' : 'orange');
+            renderPortfolio();
+        }
+
+        function getPageName(page) {
+            const pageNames = {
+                'about': '關於我'
+            };
+            return pageNames[page] || page;
+        }
+
+        function getAIName(aiName) {
+            const aiNames = {
+                'gemini': 'Gemini',
+                'claude': 'Claude',
+                'deepseek': 'DeepSeek',
+                'gpt': 'ChatGPT'
+            };
+            return aiNames[aiName] || aiName;
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9960413ca0e8843a',t:'MTc2MTcxNTU1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
