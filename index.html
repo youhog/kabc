@@ -513,7 +513,7 @@
     </div>
    </footer>
   </main>
-  <script>
+<script>
 
    // ====================================================================
     // 📊 Google Analytics 4 (GA4) 追蹤碼初始化 (修復並放在最前面)
@@ -628,7 +628,6 @@
             // Add form event listener - [✅ 修改] 使用新的表單提交處理函式
             const form = document.getElementById('add-project-form');
             // 由於直接替換原有的 addProject 函式，確保只有一個監聽器
-            // 由於原始碼中沒有 removeEventListener，這裡將直接用新的函式替換
             // 為了相容性，我們假設這是首次添加或替換
             form.addEventListener('submit', handleProjectFormSubmit);
             
@@ -689,41 +688,44 @@
                 notice.style.display = 'block';
             }
         }
-
-        // [✅ 已修復] Initialize visit counter (方案二：第三方 API)
+        // index.html 內 (替換原有的 initializeVisitCounter 函式)
         async function initializeVisitCounter() {
-            // 1. 定義你的 API 命名空間 (使用 CNAME 檔案中的網域)
-            const namespace = 'kabc.youc.eu.org';
-            const key = 'portal_visits';
-            const apiUrl = `https://api.countapi.xyz/hit/${namespace}/${key}`;
-
-            // 2. 先顯示本地快取的數字，避免載入時顯示 "0"
+            // 💡 重要：請將 'YOUR_DEPLOYED_GAS_WEB_APP_URL' 替換為您實際部署的 Apps Script Web App URL
+            const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec';
+            
+            // 1. 先顯示本地快取的數字
             let currentLocalCount = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
             animateCounter('visit-counter', currentLocalCount);
 
             try {
-                // 3. 呼叫 API，它會自動+1 並回傳最新總數
-                const response = await fetch(apiUrl);
+                // 2. 呼叫 GAS Web App
+                const response = await fetch(GAS_API_URL);
+                
                 if (!response.ok) {
-                    throw new Error('Failed to fetch visit count');
+                    throw new Error(`GAS response status: ${response.status}`);
                 }
+                
                 const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.message);
+                }
+
                 const newServerCount = data.value;
 
-                // 4. 更新計數器為 API 回傳的最新數字
+                // 3. 更新計數器為 GAS 回傳的最新數字
                 animateCounter('visit-counter', newServerCount);
-                // 5. 將最新數字存回本地快取
+                // 4. 將最新數字存回本地快取
                 localStorage.setItem('visitCount', newServerCount.toString());
 
             } catch (error) {
-                console.error('CountAPI Error:', error);
-                // 備用機制：如果 API 失敗，就使用本地+1
-                visitCount = currentLocalCount + 1;
-                localStorage.setItem('visitCount', visitCount.toString());
-                animateCounter('visit-counter', visitCount);
+                console.error('GAS Counter Error:', error);
+                // 後備機制：如果 API 失敗，就使用本地快取數字，並+1作為模擬
+                let newCount = currentLocalCount + 1;
+                localStorage.setItem('visitCount', newCount.toString());
+                animateCounter('visit-counter', newCount);
             }
         }
-
         // 🔐 GitHub 認證管理
         class GitHubAuth {
             static async setupEncryption() {
@@ -1248,7 +1250,6 @@
             document.getElementById('portfolio-modal').style.display = 'none';
         }
 
-        // index.html 內 (替換原有的 renderPortfolio 函式)
         function renderPortfolio() {
             const grid = document.getElementById('portfolio-grid');
             const empty = document.getElementById('empty-portfolio');
@@ -1307,6 +1308,7 @@
                 </div>
             `).join('');
         }
+
         // Add project functions
         function showAddProjectForm() {
             // 重置為新增模式 (如果之前是編輯模式)
