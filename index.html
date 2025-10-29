@@ -1151,8 +1151,19 @@
         function navigateToAI(aiName) {
             const path = PATHS.about[aiName];
             if (path) {
-                // 步驟 1: 顯示通知
-                showNotification(`正在前往 ${getAIName(aiName)} 版本...`, 'blue');
+                // 顯示載入動畫通知
+                const aiLabel = getAIName(aiName);
+                const notification = document.createElement('div');
+                notification.className = 'notification show';
+                notification.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="loading-spinner"></div>
+                        <span class="text-gray-800 font-medium animate-pulse">
+                            正在前往 ${aiLabel} 版本中...
+                        </span>
+                    </div>
+                `;
+                document.body.appendChild(notification);
                 
                 // 步驟 2: [關鍵修復] 移除 setTimeout，直接導航。
                 // 瀏覽器會攔截不是由「直接點擊」觸發的 window.location 更改。
