@@ -1112,13 +1112,18 @@
             showNotification(`正在導航到 ${getPageName(page)}...`, 'green');
         }
 
-        // AI selection function
+        // AI selection function - 修正為在當前頁面跳轉
         function navigateToAI(aiName) {
             const path = PATHS.about[aiName];
             if (path) {
+                // 步驟 1: 顯示通知
                 showNotification(`正在前往 ${getAIName(aiName)} 版本...`, 'blue');
-                // 在新分頁開啟，避免離開主頁
-                window.open(path, '_blank', 'noopener,noreferrer');
+                
+                // 步驟 2: 改變導航方式，在當前分頁跳轉，不會觸發彈出式視窗阻擋
+                setTimeout(() => {
+                    window.location.href = path; // <--- 關鍵修正：替換 window.open
+                }, 500); // 延遲 500ms 讓通知顯示後再跳轉
+                
             } else {
                 showNotification(`${getAIName(aiName)} 版本尚未建立`, 'orange');
             }
