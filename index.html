@@ -358,7 +358,7 @@
     <div class="particle" style="left: 90%; width: 4px; height: 4px; animation-delay: 16s;"></div>
    </div><!-- Version Badge -->
    <div class="version-badge">
-    Youzih✨
+    v12.0 ✨
    </div><!-- Header -->
    <header class="text-center py-16 px-6 relative">
     <h1 class="text-6xl font-bold text-gradient mb-6 tracking-tight">Kabc的入口網站</h1>
@@ -506,8 +506,8 @@
    <footer class="text-center py-12 px-6 relative">
     <div class="max-w-4xl mx-auto">
      <div class="w-24 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 rounded-full mx-auto mb-6"></div>
-     <p class="text-white opacity-75 text-lg">Youzih © 2025 Kabc入口網站</p>
-     <p class="text-white opacity-50 text-sm mt-2">Youzih 技術支援 ✨</p>
+     <p class="text-white opacity-75 text-lg">Youzih© 2025 Kabc的入口網站</p>
+     <p class="text-white opacity-50 text-sm mt-2">Youzih 支援✨</p>
     </div>
    </footer>
   </main>
@@ -515,7 +515,7 @@
         // 🔒 GitHub 配置 - 團隊協作版本
         const GITHUB_CONFIG = {
             username: 'youhog',        // 🔧 替換成你的 GitHub 用戶名
-            repo: 'kabc',          // 🔧 替換成你的倉庫名稱
+            repo:'kabc',          // 🔧 替換成你的倉庫名稱
             dataFile: 'data/portfolio-data.json', // 數據檔案路徑 (建議放在 data 資料夾)
             publicDataUrl: './data/portfolio-data.json', // 公開數據檔案路徑 (用於讀取)
             encryptionKey: null,             // 加密密鑰 (運行時設置)
@@ -879,7 +879,14 @@
                     }
                     
                     const data = await response.json();
-                    const content = atob(data.content);
+                    // 修復中文字符解碼問題
+                    const binaryString = atob(data.content);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    const decoder = new TextDecoder('utf-8');
+                    const content = decoder.decode(bytes);
                     return JSON.parse(content);
                 } catch (error) {
                     console.error('從 GitHub 讀取失敗:', error);
@@ -912,9 +919,13 @@
                         // 檔案可能不存在，繼續執行
                     }
                     
-                    // 準備要上傳的內容
-                    const content = btoa(JSON.stringify(portfolioData, null, 2));
-                    const commitMessage = `更新作品集數據 - ${new Date().toLocaleString('zh-TW')}`;
+                    // 準備要上傳的內容 - 修復中文字符編碼問題
+                    const jsonString = JSON.stringify(portfolioData, null, 2);
+                    // 使用 TextEncoder 和 Uint8Array 來正確處理 UTF-8 編碼
+                    const encoder = new TextEncoder();
+                    const utf8Bytes = encoder.encode(jsonString);
+                    const content = btoa(String.fromCharCode(...utf8Bytes));
+                    const commitMessage = `Update portfolio data - ${new Date().toISOString()}`;
                     
                     const requestBody = {
                         message: commitMessage,
@@ -1513,5 +1524,5 @@
             }
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9961018105f03322',t:'MTc2MTcyMzQyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99611e3db2803322',t:'MTc2MTcyNDYwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
