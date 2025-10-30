@@ -525,16 +525,12 @@
     // ====================================================================
 
     // 🚨 GitHub Actions 環境變數注入點 (Secrets)
-    // 部署時，GitHub Actions 將會透過 sed 替換以下註解行，注入實際的 Secrets 值。
-
-    // 註解：AUTH_TOKEN_SECRET
-    // 註解：AUTH_PASSWORD_SECRET
+    // 【修正：不再寫入 Token 密文，確保程式碼中不包含敏感資訊】
+    const AUTH_TOKEN_SECRET = ''; 
+    const AUTH_PASSWORD_SECRET = ''; 
     
-    // 💡 本地測試專用變數：請將下方 GAS_API_URL 替換為您部署好的 Web App URL。
-    // 如果要在本機測試 GitHub 同步，請將以下兩行取消註解，並填寫您的 Secrets 值。
-    // const AUTH_TOKEN_SECRET = 'YOUR_ENCRYPTED_GITHUB_TOKEN'; // 替換為您加密後的 Token
-    // const AUTH_PASSWORD_SECRET = 'YOUR_ENCRYPTION_PASSWORD'; // 替換為您的解密密碼 (原始密碼)
-    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec'; // 替換為您部署好的 GAS Web App URL
+    // 💡 GAS/GitHub 配置
+    const GAS_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL'; // 替換為您部署好的 GAS Web App URL
 
 
     // 🔒 GitHub 配置 - 團隊協作版本
@@ -810,9 +806,11 @@
                 const key = await SimpleEncryption.generateKey(password);
                 const encryptedToken = await SimpleEncryption.encrypt(token, key);
                 
+                // 成功加密後，將密文和啟用狀態儲存在本地
                 localStorage.setItem('encryptedGitHubToken', encryptedToken);
                 localStorage.setItem('githubSyncEnabled', 'true');
                 
+                // 更新會話配置 (但不設置 sessionUnlocked=true)
                 GITHUB_CONFIG.encryptionKey = key;
                 GITHUB_CONFIG.encryptedToken = encryptedToken;
                 
@@ -872,7 +870,8 @@
 
         static async verifyPassword() {
             const password = document.getElementById('unlock-password').value;
-            const encryptedToken = localStorage.getItem('encryptedGitHubToken') || GITHUB_CONFIG.encryptedToken; // 增加對 Secrets 注入的 Token 檢查
+            // 優先從本地儲存中獲取加密 Token
+            const encryptedToken = localStorage.getItem('encryptedGitHubToken') || GITHUB_CONFIG.encryptedToken; 
             
             if (!password) {
                 showNotification('請輸入密碼', 'red');
@@ -912,28 +911,21 @@
         }
 
         static async getDecryptedToken() {
-            // ... (保持不變)
+            // 這個函數保持原樣，因為它只負責檢查狀態，不主動觸發密碼輸入框。
             if (!GITHUB_CONFIG.encryptionKey && !GITHUB_CONFIG.encryptedToken) {
                 return null;
             }
             
-            // 如果已經有金鑰 (代表 Actions 自動解鎖成功或手動解鎖過了)
             if (GITHUB_CONFIG.encryptionKey && GITHUB_CONFIG.encryptedToken) {
                  try {
                     return await SimpleEncryption.decrypt(GITHUB_CONFIG.encryptedToken, GITHUB_CONFIG.encryptionKey);
                 } catch (error) {
-                    // 如果因為某種原因解密失敗，清空金鑰強制重新解鎖
                     GITHUB_CONFIG.encryptionKey = null;
                     return null;
                 }
             }
             
-            // 如果沒有金鑰，但有加密 Token (代表需要手動解鎖)
-            if (!GITHUB_CONFIG.encryptionKey && GITHUB_CONFIG.encryptedToken) {
-                // 不自動觸發解鎖，而是返回 null，讓上層邏輯決定是否要求密碼
-                return null; 
-            }
-            
+            // 由於用戶要求手動輸入，所以即使有 Token，也必須通過 savePortfolioData 內的邏輯觸發密碼框。
             return null;
         }
     }
@@ -942,32 +934,15 @@
     // 函數定義 (Functions) - 確保在 DOMContentLoaded 之前定義
     // ------------------------------------------------------------------------------------------------
 
-    // 💡 嘗試自動解鎖 Actions 注入的 Token
+    // 💡 忽略所有 Secrets 注入的自動解鎖邏輯，只讀取本地儲存。
     async function initializeGitHubToken() {
-        // ... (保持不變)
-        if (typeof AUTH_TOKEN_SECRET !== 'undefined' && AUTH_TOKEN_SECRET.length > 10) {
-            
-            // 如果 Actions 注入了 Token 和密碼，則嘗試自動解鎖
-            try {
-                const key = await SimpleEncryption.generateKey(AUTH_PASSWORD_SECRET);
-                GITHUB_CONFIG.encryptionKey = key;
-                GITHUB_CONFIG.encryptedToken = AUTH_TOKEN_SECRET;
-
-                await SimpleEncryption.decrypt(GITHUB_CONFIG.encryptedToken, key);
-                
-                GITHUB_CONFIG.sessionUnlocked = true;
-                localStorage.setItem('githubSyncEnabled', 'true'); 
-                return true;
-            } catch (error) {
-                console.error("Actions Secret 自動解密失敗:", error);
-                GITHUB_CONFIG.encryptedToken = null;
-                GITHUB_CONFIG.encryptionKey = null;
-                localStorage.setItem('githubSyncEnabled', 'false');
-            }
-        }
+        // 1. 忽略所有 Secrets 變數的檢查。
         
+        // 2. 檢查本地瀏覽器是否有儲存的加密 Token。
         const encryptedToken = localStorage.getItem('encryptedGitHubToken');
+        
         if (encryptedToken) {
+            // 如果本地瀏覽器儲存了加密 Token，則啟用同步功能，但保持 sessionUnlocked 為 false。
             GITHUB_CONFIG.encryptedToken = encryptedToken;
             localStorage.setItem('githubSyncEnabled', 'true');
         } else {
@@ -978,8 +953,7 @@
 
     // [✅ GAS 計數器邏輯]
     async function initializeVisitCounter() {
-        // 💡 替換為您部署好的 GAS Web App URL
-        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec'; 
+        const GAS_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL'; 
         
         let currentLocalCount = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
         animateCounter('visit-counter', currentLocalCount);
@@ -1017,7 +991,6 @@
 
     // Load portfolio data (團隊協作版本 - 優先讀取公開檔案)
     async function loadPortfolioData() {
-        // ... (保持不變)
         try {
             setLoadingState(true);
             
@@ -1073,7 +1046,6 @@
 
     // Save portfolio data (團隊協作版本 - 只有管理員才能同步到 GitHub)
     async function savePortfolioData(forceGitHubSync = false) {
-        // ... (保持不變)
         try {
             setLoadingState(true);
             
@@ -1084,13 +1056,8 @@
             
             // 如果強制同步到 GitHub (管理員操作)
             if (forceGitHubSync) {
-                // 檢查是否已透過 Secrets 自動解鎖
-                if (AUTH_TOKEN_SECRET && !GITHUB_CONFIG.sessionUnlocked) { // 這裡檢查是否有 Secrets 注入但未解鎖 (因上面 syncToGitHub 已將 sessionUnlocked 設為 false)
-                   // 嘗試再次自動解鎖 (以防第一次失敗)
-                   await initializeGitHubToken();
-                }
                 
-                // 只有當 sessionUnlocked 為 false 時，才會觸發 unlockToken 彈窗。
+                // 【關鍵修正】強制觸發手動解鎖流程，忽略 sessionUnlocked 狀態
                 if (!GITHUB_CONFIG.sessionUnlocked) {
                     // 走手動解鎖流程 (會彈出密碼框)
                     const token = await GitHubAuth.unlockToken();
@@ -1098,6 +1065,7 @@
                         showNotification('❌ 需要管理員權限才能同步到 GitHub', 'red');
                         return false;
                     }
+                    // 成功解鎖後，設置 sessionUnlocked 為 true
                     GITHUB_CONFIG.sessionUnlocked = true;
                 }
                 
@@ -1127,7 +1095,6 @@
 
     // Check GitHub configuration
     function checkGitHubConfig() {
-        // ... (保持不變)
         const isConfigured = GITHUB_CONFIG.username.length > 1 && GITHUB_CONFIG.repo.length > 1; 
         const dataSource = localStorage.getItem('dataSource') || 'unknown';
         
@@ -1151,7 +1118,8 @@
                 notice.style.borderColor = '#3b82f6';
                 notice.style.color = '#1e40af';
             } else if (isConfigured) {
-                const unlockStatus = GITHUB_CONFIG.sessionUnlocked ? '已自動解鎖 (Secrets)' : '需要手動解鎖';
+                // 【修正】這裡的狀態只會顯示 "需要手動解鎖" 或 "已解鎖"
+                const unlockStatus = GITHUB_CONFIG.sessionUnlocked ? '已解鎖 (本機)' : '需要手動解鎖';
                 notice.innerHTML = `
                     <strong>⚙️ 管理員模式：</strong> 
                     檢測到 GitHub 配置，同步狀態: ${unlockStatus}
@@ -1176,7 +1144,6 @@
 
     // Set loading state
     function setLoadingState(loading) {
-        // ... (保持不變)
         isLoading = loading;
         const spinners = document.querySelectorAll('.loading-spinner');
         spinners.forEach(spinner => {
@@ -1186,7 +1153,6 @@
 
     // Animate counter
     function animateCounter(elementId, targetValue) {
-        // ... (保持不變)
         const element = document.getElementById(elementId);
         if (!element) return; 
         
@@ -1205,7 +1171,6 @@
 
     // Update portfolio count
     function updatePortfolioCount() {
-        // ... (保持不變)
         const countElement = document.getElementById('count-number');
         if (countElement) {
             animateCounter('count-number', portfolioData.length);
@@ -1214,7 +1179,6 @@
 
     // Refresh portfolio data
     async function refreshPortfolio() {
-        // ... (保持不變)
         await loadPortfolioData();
         if (document.getElementById('portfolio-modal').style.display === 'flex') {
             renderPortfolio();
@@ -1223,13 +1187,11 @@
 
     // Navigation function
     function navigateToPage(page) {
-        // ... (保持不變)
         showNotification(`正在導航到 ${getPageName(page)}...`, 'green');
     }
 
     // [✅ 已修復] AI selection function - 移除 setTimeout
     function navigateToAI(aiName) {
-        // ... (保持不變)
         const path = PATHS.about[aiName];
         if (path) {
             const aiLabel = getAIName(aiName);
@@ -1259,7 +1221,6 @@
     
     // Navigate to project folder items
     function navigateToProject(item) {
-        // ... (保持不變)
         const path = PATHS.projects[item];
         if (path) {
             const itemNames = {
@@ -1275,7 +1236,6 @@
 
     // Show notification
     function showNotification(message, color = 'green') {
-        // ... (保持不變)
         const notification = document.createElement('div');
         notification.className = 'notification';
         
@@ -1307,18 +1267,15 @@
 
     // Portfolio functions
     function showPortfolio() {
-        // ... (保持不變)
         document.getElementById('portfolio-modal').style.display = 'flex';
         renderPortfolio();
     }
 
     function closePortfolio() {
-        // ... (保持不變)
         document.getElementById('portfolio-modal').style.display = 'none';
     }
 
     function renderPortfolio() {
-        // ... (保持不變)
         const grid = document.getElementById('portfolio-grid');
         const empty = document.getElementById('empty-portfolio');
         
@@ -1379,7 +1336,6 @@
 
     // Add project functions
     function showAddProjectForm() {
-        // ... (保持不變)
         document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
         document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
         document.getElementById('project-id-to-edit').value = ''; 
@@ -1390,7 +1346,6 @@
 
     // [✅ 新增] 顯示編輯作品表單
     function showEditProjectForm(projectId) {
-        // ... (保持不變)
         const project = portfolioData.find(p => p.id === projectId);
         if (!project) {
             showNotification('找不到該作品', 'red');
@@ -1414,7 +1369,6 @@
 
     // [✅ 修改] 關閉新增/編輯作品表單
     function closeAddProjectForm() {
-        // ... (保持不變)
         document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
         document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
         
@@ -1426,7 +1380,6 @@
 
     // [✅ 修改] 處理新增或編輯的表單提交 (替換原有的 addProject 函式)
     async function handleProjectFormSubmit(event) {
-        // ... (保持不變)
         event.preventDefault();
         
         if (isLoading) return;
@@ -1486,19 +1439,16 @@
 
 
     function confirmDelete(projectId) {
-        // ... (保持不變)
         deleteConfirmId = projectId;
         renderPortfolio();
     }
 
     function cancelDelete() {
-        // ... (保持不變)
         deleteConfirmId = null;
         renderPortfolio();
     }
 
     async function deleteProject(projectId) {
-        // ... (保持不變)
         if (isLoading) return;
         
         portfolioData = portfolioData.filter(project => project.id !== projectId);
@@ -1511,7 +1461,6 @@
     }
 
     function getPageName(page) {
-        // ... (保持不變)
         const pageNames = {
             'about': '關於我'
         };
@@ -1519,7 +1468,6 @@
     }
 
     function getAIName(aiName) {
-        // ... (保持不變)
         const aiNames = {
             'gemini': 'Gemini',
             'claude': 'Claude',
@@ -1530,7 +1478,6 @@
     }
 
     function showGitHubSettings() {
-        // ... (保持不變)
         const githubEnabled = localStorage.getItem('githubSyncEnabled') === 'true';
         
         const modal = document.createElement('div');
@@ -1621,7 +1568,6 @@
     }
 
     function closeGitHubSettings() {
-        // ... (保持不變)
         if (window.currentGitHubModal) {
             document.body.removeChild(window.currentGitHubModal);
             window.currentGitHubModal = null;
@@ -1629,7 +1575,6 @@
     }
 
     async function setupGitHubSync() {
-        // ... (保持不變)
         closeGitHubSettings();
         const success = await GitHubAuth.setupEncryption();
         if (success) {
@@ -1639,7 +1584,6 @@
     }
 
     async function testGitHubConnection() {
-        // ... (保持不變)
         try {
             setLoadingState(true);
             showNotification('🔍 正在測試 GitHub 連接...', 'blue');
@@ -1654,7 +1598,6 @@
     }
 
     async function changeGitHubPassword() {
-        // ... (保持不變)
         closeGitHubSettings();
         
         const currentToken = await GitHubAuth.getDecryptedToken();
@@ -1691,7 +1634,6 @@
     }
 
     async function saveNewPassword(token) {
-        // ... (保持不變)
         const newPassword = document.getElementById('new-password').value;
         if (!newPassword) {
             showNotification('請輸入新密碼', 'red');
@@ -1714,7 +1656,6 @@
     }
 
     function cancelPasswordChange() {
-        // ... (保持不變)
         if (window.passwordChangeModal) {
             document.body.removeChild(window.passwordChangeModal);
             window.passwordChangeModal = null;
@@ -1722,7 +1663,6 @@
     }
 
     function disableGitHubSync() {
-        // ... (保持不變)
         if (confirm('確定要停用 GitHub 同步嗎？這將刪除本地保存的加密 token。')) {
             localStorage.removeItem('encryptedGitHubToken');
             localStorage.setItem('githubSyncEnabled', 'false');
@@ -1735,7 +1675,7 @@
         }
     }
 
-    // 新增 GitHub 同步功能 (已修改)
+    // 新增 GitHub 同步功能 (已修改為強制要求密碼)
     async function syncToGitHub() {
         const isConfigured = GITHUB_CONFIG.username.length > 1 && GITHUB_CONFIG.repo.length > 1;
         
@@ -1749,33 +1689,18 @@
             return;
         }
         
-        // ------------------------------------------------------------------------------------------------
-        // 【修正邏輯】強制要求手動輸入密碼來確認同步操作 (覆蓋自動解鎖)
-        // ------------------------------------------------------------------------------------------------
-        
-        // 1. 儲存目前的解鎖狀態 (防止同步失敗後，自動解鎖狀態遺失)
-        const wasUnlocked = GITHUB_CONFIG.sessionUnlocked;
-        
-        // 2. 忽略自動解鎖狀態，強制下次檢查時觸發密碼提示。
-        //    這將強制 savePortfolioData 內部的檢查去執行 GitHubAuth.unlockToken()，彈出密碼框。
+        // 1. 忽略自動解鎖狀態，強制下次檢查時觸發密碼提示。
         GITHUB_CONFIG.sessionUnlocked = false; 
         
-        // 3. 呼叫同步邏輯，此時 savePortfolioData 內部會觸發密碼彈窗
+        // 2. 呼叫同步邏輯，此時 savePortfolioData 內部會觸發密碼彈窗
         const success = await savePortfolioData(true); 
         
-        // 4. 如果同步失敗，且原本是解鎖狀態，則將狀態還原，避免用戶需要再次手動解鎖才能進行其他操作
-        if (!success && wasUnlocked) {
-             GITHUB_CONFIG.sessionUnlocked = true;
-        } else if (success) {
-            // 如果成功，即使原本是 wasUnlocked=false，現在也因為 savePortfolioData 內的 unlockToken 成功，所以 GITHUB_CONFIG.sessionUnlocked 已經是 true 了。
-            GITHUB_CONFIG.sessionUnlocked = true;
-        }
-        // ------------------------------------------------------------------------------------------------
-        
+        // 3. 如果成功，將狀態設為已解鎖 (因為密碼已驗證)
         if (success) {
-            checkGitHubConfig(); // 更新配置狀態顯示
+            GITHUB_CONFIG.sessionUnlocked = true;
+            checkGitHubConfig(); 
             if (document.getElementById('portfolio-modal').style.display === 'flex') {
-                renderPortfolio(); // 更新作品集顯示
+                renderPortfolio(); 
             }
         }
     }
@@ -1786,7 +1711,6 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', async function() {
-        // ... (保持不變)
         await initializeGitHubToken();
         
         await loadPortfolioData();
