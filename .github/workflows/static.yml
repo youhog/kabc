@@ -46,16 +46,19 @@ jobs:
           echo "ALLOW_DEPLOY=true" >> $GITHUB_ENV
           echo "SUMMARY=$SUMMARY" >> $GITHUB_ENV
 
-      # 🛑 Step 2. 移除原有的「停止部署（若不允許）」步驟
-
-      # 🚀 Step 3. 執行部署步驟 (注入配置變數)
+      # 🚀 Step 2. 執行部署步驟
       - name: 注入配置變數
         if: env.ALLOW_DEPLOY == 'true'
         run: |
+          # 注入倉庫和用戶名
           sed -i "s|'REPO_OWNER_USERNAME_youhog'|'${{ secrets.REPO_OWNER_USERNAME }}'|g" index.html
           sed -i "s|'REPO_NAME_kabc'|'${{ secrets.REPO_NAME }}'|g" index.html
-          sed -i "s|// 註解：AUTH_TOKEN_SECRET|const AUTH_TOKEN_SECRET = '${{ secrets.AUTH_TOKEN_SECRET }}';|g" index.html
-          sed -i "s|// 註解：AUTH_PASSWORD_SECRET|const AUTH_PASSWORD_SECRET = '${{ secrets.AUTH_PASSWORD_SECRET }}';|g" index.html
+          
+          # 注入加密 Token 到 DEPLOYED_ENCRYPTED_TOKEN 變數 (保留空值給前端密碼輸入機制)
+          sed -i "s|const DEPLOYED_ENCRYPTED_TOKEN = '';|const DEPLOYED_ENCRYPTED_TOKEN = '${{ secrets.AUTH_TOKEN_SECRET }}';|g" index.html
+          # 移除 AUTH_PASSWORD_SECRET 的注入
+          sed -i '/const AUTH_PASSWORD_SECRET =/d' index.html
+
 
       - name: 設定頁面
         if: env.ALLOW_DEPLOY == 'true'
