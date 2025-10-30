@@ -5,7 +5,7 @@ on:
   # 只允許您從 Actions 頁籤手動運行此工作流程
   workflow_dispatch:
 
-  # ✅ 2️⃣ 當特定檔案有變動時自動觸發
+  # ✅ 當特定檔案有變動時自動觸發
   push:
     branches:
       - youzih/dev/*
@@ -14,7 +14,6 @@ on:
       - 'data/portfolio-data.json'  # 監聽資料檔變更
       - '.github/workflows/deploy.yml'  # （可選）若你更新工作流程也重新部署
       - '.github/workflows/static.yml'
-
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -38,6 +37,22 @@ jobs:
     steps:
       - name: 檢查
         uses: actions/checkout@v4
+      
+      # 1. 注入配置變數 (整合進新 Workflow)
+      - name: 注入配置變數
+        run: |
+          # 🚨 警告: 這裡的 sed 命令將會使用您的 Secrets 值替換 index.html 內的佔位符。
+          # ----------------------------------------------------------------------
+          # 替換 GITHUB_CONFIG 內的用戶名和倉庫名 (使用新的 Secret 名稱)
+          sed -i "s|'youhog'        // 🔧 替換成你的 GitHub 用戶名|'${{ secrets.REPO_OWNER_USERNAME }}'|g" index.html
+          sed -i "s|'kabc'          // 🔧 替換成你的倉庫名稱|'${{ secrets.REPO_NAME }}'|g" index.html
+          
+          # 替換 Secrets 注入點 (用於自動解鎖 Token)
+          # 注意：這裡會將 Secrets 值轉換為 JS 字符串 (用單引號括起來)
+          sed -i "s|// 註解：AUTH_TOKEN_SECRET|const AUTH_TOKEN_SECRET = '${{ secrets.AUTH_TOKEN_SECRET }}';|g" index.html
+          sed -i "s|// 註解：AUTH_PASSWORD_SECRET|const AUTH_PASSWORD_SECRET = '${{ secrets.AUTH_PASSWORD_SECRET }}';|g" index.html
+          # ----------------------------------------------------------------------
+
       - name: 設定頁面
         uses: actions/configure-pages@v5
       - name: 上傳
