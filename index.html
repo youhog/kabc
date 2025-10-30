@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kabc入口網站</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-YYVEG6B1MS"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
         body {
@@ -489,19 +489,7 @@
        </div>
        <div><label class="block text-sm font-semibold text-gray-700 mb-2">作品描述</label> <textarea id="project-description" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required></textarea>
        </div>
-       <div><label class="block text-sm font-semibold text-gray-700 mb-2">分類</label>
-        <select id="project-category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required>
-         <option value="">選擇分類</option>
-         <option value="網頁設計">網頁設計</option>
-         <option value="程式開發">程式開發</option>
-         <option value="UI/UX設計">UI/UX設計</option>
-         <option value="數據分析">數據分析</option>
-         <option value="遊戲開發">遊戲開發</option>
-         <option value="網頁遊戲試作">網頁遊戲試做</option>
-         <option value="網頁遊戲開發">網頁遊戲開發</option>
-         <option value="網頁遊戲設計">網頁遊戲設計</option>
-         <option value="AI專案">AI專案</option>
-         <option value="其他">其他</option> </select>
+       <div><label class="block text-sm font-semibold text-gray-700 mb-2">分類</label> <select id="project-category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" required> <option value="">選擇分類</option> <option value="網頁設計">網頁設計</option> <option value="程式開發">程式開發</option> <option value="UI/UX設計">UI/UX設計</option> <option value="數據分析">數據分析</option> <option value="遊戲開發">遊戲開發</option> <option value="AI專案">AI專案</option> <option value="其他">其他</option> </select>
        </div>
        <div><label class="block text-sm font-semibold text-gray-700 mb-2">圖片網址 (選填)</label> <input type="text" id="project-image" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="https://example.com/image.jpg 或 ./images/project1.jpg">
         <p class="text-xs text-gray-500 mt-2 bg-gray-50 p-3 rounded-lg">💡 支援完整網址或專案內相對路徑，如：./images/project1.jpg 或 ./assets/photos/demo.png</p>
@@ -525,1183 +513,1297 @@
     </div>
    </footer>
   </main>
-<script>
+  <script>
 
    // ====================================================================
-    // 📊 Google Analytics 4 (GA4) 追蹤碼初始化 (修復並放在最前面)
+    // 📊 Google Analytics 4 (GA4) 追蹤碼初始化
     // --------------------------------------------------------------------
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
-    // 💡 注意: 這裡已使用載入 URL 中的 ID，請確認 G-YYVEG6B1MS 是您的正確衡量 ID。
     gtag('config', 'G-YYVEG6B1MS'); 
     // ====================================================================
-        // 🔒 GitHub 配置 - 團隊協作版本
-        const GITHUB_CONFIG = {
-            username: 'youhog',        // 🔧 替換成你的 GitHub 用戶名
-            repo:'kabc',          // 🔧 替換成你的倉庫名稱
-            dataFile: 'data/portfolio-data.json', // 數據檔案路徑 (建議放在 data 資料夾)
-            publicDataUrl: './data/portfolio-data.json', // 公開數據檔案路徑 (用於讀取)
-            encryptionKey: null,             // 加密密鑰 (運行時設置)
-            encryptedToken: null,            // 加密的 token (運行時設置)
-            sessionUnlocked: false           // 本次會話是否已解鎖
-        };
 
-        // 📁 檔案路徑配置 - 根據你的檔案結構
-        const PATHS = {
-            about: {
-                gpt: './aboutme/gpt/index.html',
-                claude: './aboutme/claude/index.html', 
-                deepseek: './aboutme/deepseek/index.html',
-                gemini: './aboutme/gemini/index.html'
-            },
-            projects: {
-                kabc: './projects/kabc/about/index.html'  // 你的關於我頁面
-            }
-        };
+    // 🚨 GitHub Actions 環境變數注入點 (Secrets)
+    // 部署時，GitHub Actions 將會透過 sed 替換以下註解行，注入實際的 Secrets 值。
 
-        // 🔐 簡單的加密/解密函數 (使用 AES-GCM)
-        class SimpleEncryption {
-            static async generateKey(password) {
-                const encoder = new TextEncoder();
-                const keyMaterial = await crypto.subtle.importKey(
-                    'raw',
-                    encoder.encode(password),
-                    { name: 'PBKDF2' },
-                    false,
-                    ['deriveBits', 'deriveKey']
-                );
+    // 註解：AUTH_TOKEN_SECRET
+    // 註解：AUTH_PASSWORD_SECRET
+    
+    // 💡 本地測試專用變數：請將下方 GAS_API_URL 替換為您部署好的 Web App URL。
+    // 如果要在本機測試 GitHub 同步，請將以下兩行取消註解，並填寫您的 Secrets 值。
+    // const AUTH_TOKEN_SECRET = 'YOUR_ENCRYPTED_GITHUB_TOKEN'; // 替換為您加密後的 Token
+    // const AUTH_PASSWORD_SECRET = 'YOUR_ENCRYPTION_PASSWORD'; // 替換為您的解密密碼 (原始密碼)
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec'; // 替換為您部署好的 GAS Web App URL
+
+
+    // 🔒 GitHub 配置 - 團隊協作版本
+    const GITHUB_CONFIG = {
+        // 警告：以下 'youhog' 和 'kabc' 會被 GitHub Actions 注入的 Secrets 覆蓋。
+        username: 'REPO_OWNER_USERNAME_youhog',        // 🔧 替換成你的 GitHub 用戶名 (或被 Actions 覆蓋)
+        repo:'REPO_NAME_kabc',          // 🔧 替換成你的倉庫名稱 (或被 Actions 覆蓋)
+        dataFile: 'data/portfolio-data.json', // 數據檔案路徑 (建議放在 data 資料夾)
+        publicDataUrl: './data/portfolio-data.json', // 公開數據檔案路徑 (用於讀取)
+        encryptionKey: null,             // 加密密鑰 (運行時設置)
+        encryptedToken: null,            // 加密的 token (運行時設置)
+        sessionUnlocked: false           // 本次會話是否已解鎖
+    };
+    
+    // 📁 檔案路徑配置 - 根據你的檔案結構
+    const PATHS = {
+        about: {
+            gpt: './aboutme/gpt/index.html',
+            claude: './aboutme/claude/index.html', 
+            deepseek: './aboutme/deepseek/index.html',
+            gemini: './aboutme/gemini/index.html'
+        },
+        projects: {
+            kabc: './projects/kabc/about/index.html'  // 你的關於我頁面
+        }
+    };
+
+    // Global variables
+    let portfolioData = [];
+    let visitCount = 0;
+    let deleteConfirmId = null;
+    let isLoading = false;
+
+    // ------------------------------------------------------------------------------------------------
+    // 🔐 類別定義 (Classes) - 確保在函數呼叫之前定義
+    // ------------------------------------------------------------------------------------------------
+    
+    // 🔐 簡單的加密/解密函數 (使用 AES-GCM)
+    class SimpleEncryption {
+        static async generateKey(password) {
+            const encoder = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(password),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+            
+            return await crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode('github-token-salt'),
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['encrypt', 'decrypt']
+            );
+        }
+
+        static async encrypt(text, key) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            
+            const encrypted = await crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv: iv },
+                key,
+                data
+            );
+            
+            // 將 IV 和加密數據組合
+            const combined = new Uint8Array(iv.length + encrypted.byteLength);
+            combined.set(iv);
+            combined.set(new Uint8Array(encrypted), iv.length);
+            
+            return btoa(String.fromCharCode(...combined));
+        }
+
+        static async decrypt(encryptedData, key) {
+            try {
+                const combined = new Uint8Array(atob(encryptedData).split('').map(c => c.charCodeAt(0)));
+                const iv = combined.slice(0, 12);
+                const encrypted = combined.slice(12);
                 
-                return await crypto.subtle.deriveKey(
-                    {
-                        name: 'PBKDF2',
-                        salt: encoder.encode('github-token-salt'),
-                        iterations: 100000,
-                        hash: 'SHA-256'
-                    },
-                    keyMaterial,
-                    { name: 'AES-GCM', length: 256 },
-                    false,
-                    ['encrypt', 'decrypt']
-                );
-            }
-
-            static async encrypt(text, key) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(text);
-                const iv = crypto.getRandomValues(new Uint8Array(12));
-                
-                const encrypted = await crypto.subtle.encrypt(
+                const decrypted = await crypto.subtle.decrypt(
                     { name: 'AES-GCM', iv: iv },
                     key,
-                    data
+                    encrypted
                 );
                 
-                // 將 IV 和加密數據組合
-                const combined = new Uint8Array(iv.length + encrypted.byteLength);
-                combined.set(iv);
-                combined.set(new Uint8Array(encrypted), iv.length);
-                
-                return btoa(String.fromCharCode(...combined));
-            }
-
-            static async decrypt(encryptedData, key) {
-                try {
-                    const combined = new Uint8Array(atob(encryptedData).split('').map(c => c.charCodeAt(0)));
-                    const iv = combined.slice(0, 12);
-                    const encrypted = combined.slice(12);
-                    
-                    const decrypted = await crypto.subtle.decrypt(
-                        { name: 'AES-GCM', iv: iv },
-                        key,
-                        encrypted
-                    );
-                    
-                    return new TextDecoder().decode(decrypted);
-                } catch (error) {
-                    throw new Error('解密失敗：密碼可能不正確');
-                }
+                return new TextDecoder().decode(decrypted);
+            } catch (error) {
+                throw new Error('解密失敗：密碼可能不正確');
             }
         }
+    }
 
-        // Global variables
-        let portfolioData = [];
-        let visitCount = 0;
-        let deleteConfirmId = null;
-        let isLoading = false;
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', async function() {
-            initializeVisitCounter(); // [✅ 已修復] 呼叫新版計數器
-            await loadPortfolioData();
-            checkGitHubConfig();
+    // GitHub API 操作類別
+    class GitHubAPI {
+        static async readFromGitHub() {
+            const token = await GitHubAuth.getDecryptedToken();
+            if (!token) return null;
             
-            // Add form event listener - [✅ 修改] 使用新的表單提交處理函式
-            const form = document.getElementById('add-project-form');
-            // 由於直接替換原有的 addProject 函式，確保只有一個監聽器
-            // 為了相容性，我們假設這是首次添加或替換
-            form.addEventListener('submit', handleProjectFormSubmit);
-            
-            // Close modals on outside click
-            document.getElementById('portfolio-modal').addEventListener('click', function(e) {
-                if (e.target === this) closePortfolio();
-            });
-            
-            document.getElementById('add-project-modal').addEventListener('click', function(e) {
-                if (e.target === this) closeAddProjectForm();
-            });
-        });
-
-        // Check GitHub configuration
-        function checkGitHubConfig() {
-            const isConfigured = GITHUB_CONFIG.username !== 'your-username' && 
-                                GITHUB_CONFIG.repo !== 'your-repo-name';
-            const dataSource = localStorage.getItem('dataSource') || 'unknown';
-            
-            const notice = document.getElementById('config-notice');
-            if (notice) {
-                if (dataSource === 'public') {
-                    notice.innerHTML = `
-                        <strong>🌐 團隊協作模式：</strong> 
-                        正在使用團隊共享的作品集數據，所有成員都能看到最新內容！
-                        <br><small>💡 管理員可以透過 GitHub 同步功能更新共享數據</small>
-                    `;
-                    notice.style.background = 'linear-gradient(135deg, #d1fae5, #a7f3d0)';
-                    notice.style.borderColor = '#10b981';
-                    notice.style.color = '#065f46';
-                } else if (dataSource === 'github') {
-                    notice.innerHTML = `
-                        <strong>☁️ GitHub 同步模式：</strong> 
-                        數據已同步到 GitHub，團隊成員將在下次重新載入時看到更新！
-                    `;
-                    notice.style.background = 'linear-gradient(135deg, #dbeafe, #bfdbfe)';
-                    notice.style.borderColor = '#3b82f6';
-                    notice.style.color = '#1e40af';
-                } else if (isConfigured) {
-                    notice.innerHTML = `
-                        <strong>⚙️ 管理員模式：</strong> 
-                        檢測到 GitHub 配置，你可以同步數據供團隊成員使用！
-                        <br><small>💡 點擊「GitHub 同步」按鈕來更新團隊共享數據</small>
-                    `;
-                    notice.style.background = 'linear-gradient(135deg, #fef3c7, #fde68a)';
-                    notice.style.borderColor = '#f59e0b';
-                    notice.style.color = '#92400e';
-                } else {
-                    notice.innerHTML = `
-                        <strong>🔒 本地模式：</strong> 
-                        數據安全保存在本地瀏覽器中，適合個人使用！
-                        <br><small>💡 如需團隊協作，請聯繫管理員設置 GitHub 同步</small>
-                    `;
-                    notice.style.background = 'linear-gradient(135deg, #f3f4f6, #e5e7eb)';
-                    notice.style.borderColor = '#9ca3af';
-                    notice.style.color = '#374151';
-                }
-                notice.style.display = 'block';
-            }
-        }
-        // index.html 內 (替換原有的 initializeVisitCounter 函式)
-        async function initializeVisitCounter() {
-            // 💡 重要：請將 'YOUR_DEPLOYED_GAS_WEB_APP_URL' 替換為您實際部署的 Apps Script Web App URL
-            const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec';
-            
-            // 1. 先顯示本地快取的數字
-            let currentLocalCount = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
-            animateCounter('visit-counter', currentLocalCount);
-
             try {
-                // 2. 呼叫 GAS Web App
-                const response = await fetch(GAS_API_URL);
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (response.status === 404) {
+                    return []; // 檔案不存在，返回空陣列
+                }
                 
                 if (!response.ok) {
-                    throw new Error(`GAS response status: ${response.status}`);
+                    throw new Error(`GitHub API 錯誤: ${response.status}`);
                 }
                 
                 const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.message);
+                // 修復中文字符解碼問題
+                const binaryString = atob(data.content);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
                 }
-
-                const newServerCount = data.value;
-
-                // 3. 更新計數器為 GAS 回傳的最新數字
-                animateCounter('visit-counter', newServerCount);
-                // 4. 將最新數字存回本地快取
-                localStorage.setItem('visitCount', newServerCount.toString());
-
+                const decoder = new TextDecoder('utf-8');
+                const content = decoder.decode(bytes);
+                return JSON.parse(content);
             } catch (error) {
-                console.error('GAS Counter Error:', error);
-                // 後備機制：如果 API 失敗，就使用本地快取數字，並+1作為模擬
-                let newCount = currentLocalCount + 1;
-                localStorage.setItem('visitCount', newCount.toString());
-                animateCounter('visit-counter', newCount);
-            }
-        }
-        // 🔐 GitHub 認證管理
-        class GitHubAuth {
-            static async setupEncryption() {
-                return new Promise((resolve) => {
-                    const modal = document.createElement('div');
-                    modal.className = 'modal-overlay';
-                    modal.innerHTML = `
-                        <div class="modal-content max-w-md">
-                            <div class="p-6 border-b border-gray-200">
-                                <h2 class="text-xl font-bold text-gray-800">🔐 GitHub 同步設置</h2>
-                            </div>
-                            <div class="p-6">
-                                <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <p class="text-sm text-blue-800">
-                                        <strong>安全提醒：</strong> 你的 GitHub Token 將使用軍用級 AES-256 加密，
-                                        只有你知道的密碼才能解密。
-                                    </p>
-                                </div>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">GitHub Token</label>
-                                        <input type="password" id="github-token" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="ghp_xxxxxxxxxxxx 或 github_pat_xxxxx">
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            <a href="https://github.com/settings/tokens" target="_blank" class="text-blue-600 hover:underline">
-                                                → 如何獲取 GitHub Token
-                                            </a>
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">加密密碼</label>
-                                        <input type="password" id="encryption-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="設置一個強密碼">
-                                        <p class="text-xs text-gray-500 mt-1">用於加密你的 GitHub Token，請牢記此密碼</p>
-                                    </div>
-                                </div>
-                                <div class="mt-6 flex gap-3">
-                                    <button onclick="GitHubAuth.saveEncryptedToken()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                                        🔒 加密並保存
-                                    </button>
-                                    <button onclick="GitHubAuth.skipSetup()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                                        跳過
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    document.body.appendChild(modal);
-                    
-                    GitHubAuth.currentResolve = resolve;
-                    GitHubAuth.currentModal = modal;
-                });
-            }
-
-            static async saveEncryptedToken() {
-                const token = document.getElementById('github-token').value;
-                const password = document.getElementById('encryption-password').value;
-                
-                if (!token || !password) {
-                    showNotification('請填寫完整信息', 'red');
-                    return;
-                }
-                
-                try {
-                    const key = await SimpleEncryption.generateKey(password);
-                    const encryptedToken = await SimpleEncryption.encrypt(token, key);
-                    
-                    localStorage.setItem('encryptedGitHubToken', encryptedToken);
-                    localStorage.setItem('githubSyncEnabled', 'true');
-                    
-                    GITHUB_CONFIG.encryptionKey = key;
-                    GITHUB_CONFIG.encryptedToken = encryptedToken;
-                    
-                    showNotification('🔒 GitHub Token 已安全加密保存！', 'green');
-                    GitHubAuth.cleanup(true);
-                } catch (error) {
-                    showNotification('加密失敗：' + error.message, 'red');
-                }
-            }
-
-            static skipSetup() {
-                localStorage.setItem('githubSyncEnabled', 'false');
-                showNotification('已跳過 GitHub 同步設置', 'orange');
-                GitHubAuth.cleanup(false);
-            }
-
-            static cleanup(success) {
-                if (GitHubAuth.currentModal) {
-                    document.body.removeChild(GitHubAuth.currentModal);
-                }
-                if (GitHubAuth.currentResolve) {
-                    GitHubAuth.currentResolve(success);
-                }
-            }
-
-            static async unlockToken() {
-                return new Promise((resolve) => {
-                    const modal = document.createElement('div');
-                    modal.className = 'modal-overlay';
-                    modal.innerHTML = `
-                        <div class="modal-content max-w-md">
-                            <div class="p-6 border-b border-gray-200">
-                                <h2 class="text-xl font-bold text-gray-800">🔓 解鎖 GitHub 同步</h2>
-                            </div>
-                            <div class="p-6">
-                                <div class="mb-4">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">輸入加密密碼</label>
-                                    <input type="password" id="unlock-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="你的加密密碼">
-                                </div>
-                                <div class="flex gap-3">
-                                    <button onclick="GitHubAuth.verifyPassword()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                                        🔓 解鎖
-                                    </button>
-                                    <button onclick="GitHubAuth.cancelUnlock()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                                        取消
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    document.body.appendChild(modal);
-                    
-                    GitHubAuth.unlockResolve = resolve;
-                    GitHubAuth.unlockModal = modal;
-                });
-            }
-
-            static async verifyPassword() {
-                const password = document.getElementById('unlock-password').value;
-                const encryptedToken = localStorage.getItem('encryptedGitHubToken');
-                
-                if (!password) {
-                    showNotification('請輸入密碼', 'red');
-                    return;
-                }
-                
-                try {
-                    const key = await SimpleEncryption.generateKey(password);
-                    const token = await SimpleEncryption.decrypt(encryptedToken, key);
-                    
-                    GITHUB_CONFIG.encryptionKey = key;
-                    GITHUB_CONFIG.encryptedToken = encryptedToken;
-                    
-                    showNotification('🔓 GitHub 同步已解鎖！', 'green');
-                    GitHubAuth.cleanupUnlock(token);
-                } catch (error) {
-                    showNotification('密碼錯誤，請重試', 'red');
-                }
-            }
-
-            static cancelUnlock() {
-                GitHubAuth.cleanupUnlock(null);
-            }
-
-            static cleanupUnlock(token) {
-                if (GitHubAuth.unlockModal) {
-                    document.body.removeChild(GitHubAuth.unlockModal);
-                }
-                if (GitHubAuth.unlockResolve) {
-                    GitHubAuth.unlockResolve(token);
-                }
-            }
-
-            static async getDecryptedToken() {
-                if (!GITHUB_CONFIG.encryptionKey || !GITHUB_CONFIG.encryptedToken) {
-                    return null;
-                }
-                
-                try {
-                    return await SimpleEncryption.decrypt(GITHUB_CONFIG.encryptedToken, GITHUB_CONFIG.encryptionKey);
-                } catch (error) {
-                    console.error('Token 解密失敗:', error);
-                    return null;
-                }
+                console.error('從 GitHub 讀取失敗:', error);
+                throw error;
             }
         }
 
-        // GitHub API 操作
-        class GitHubAPI {
-            static async readFromGitHub() {
-                const token = await GitHubAuth.getDecryptedToken();
-                if (!token) return null;
+        static async writeToGitHub(portfolioData) {
+            const token = await GitHubAuth.getDecryptedToken();
+            if (!token) {
+                throw new Error('GitHub Token 未解鎖');
                 
+            }
+            
+            try {
+                // 先獲取現有檔案的 SHA (如果存在)
+                let sha = null;
                 try {
-                    const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`, {
+                    const existingResponse = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`, {
                         headers: {
                             'Authorization': `token ${token}`,
                             'Accept': 'application/vnd.github.v3+json'
                         }
                     });
                     
-                    if (response.status === 404) {
-                        return []; // 檔案不存在，返回空陣列
-                    }
-                    
-                    if (!response.ok) {
-                        throw new Error(`GitHub API 錯誤: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    // 修復中文字符解碼問題
-                    const binaryString = atob(data.content);
-                    const bytes = new Uint8Array(binaryString.length);
-                    for (let i = 0; i < binaryString.length; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    const decoder = new TextDecoder('utf-8');
-                    const content = decoder.decode(bytes);
-                    return JSON.parse(content);
-                } catch (error) {
-                    console.error('從 GitHub 讀取失敗:', error);
-                    throw error;
-                }
-            }
-
-            static async writeToGitHub(portfolioData) {
-                const token = await GitHubAuth.getDecryptedToken();
-                if (!token) {
-                    throw new Error('GitHub Token 未解鎖');
-                    
-                }
-                
-                try {
-                    // 先獲取現有檔案的 SHA (如果存在)
-                    let sha = null;
-                    try {
-                        const existingResponse = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`, {
-                            headers: {
-                                'Authorization': `token ${token}`,
-                                'Accept': 'application/vnd.github.v3+json'
-                            }
-                        });
-                        
-                        if (existingResponse.ok) {
-                            const existingData = await existingResponse.json();
-                            sha = existingData.sha;
-                        }
-                    } catch (error) {
-                        // 檔案可能不存在，繼續執行
-                    }
-                    
-                    // 準備要上傳的內容 - 修復中文字符編碼問題
-                    const jsonString = JSON.stringify(portfolioData, null, 2);
-                    // 使用 TextEncoder 和 Uint8Array 來正確處理 UTF-8 編碼
-                    const encoder = new TextEncoder();
-                    const utf8Bytes = encoder.encode(jsonString);
-                    const content = btoa(String.fromCharCode(...utf8Bytes));
-                    const commitMessage = `Update portfolio data - ${new Date().toISOString()}`;
-                    
-                    const requestBody = {
-                        message: commitMessage,
-                        content: content
-                    };
-                    
-                    if (sha) {
-                        requestBody.sha = sha;
-                    }
-                    
-                    const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${token}`,
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
-                    
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`GitHub API 錯誤: ${response.status} - ${errorData.message}`);
-                    }
-                    
-                    return await response.json();
-                } catch (error) {
-                    console.error('寫入 GitHub 失敗:', error);
-                    throw error;
-                }
-            }
-        }
-
-        // Load portfolio data (團隊協作版本 - 優先讀取公開檔案)
-        async function loadPortfolioData() {
-            try {
-                setLoadingState(true);
-                
-                let portfolioLoaded = false;
-                
-                // 1. 優先嘗試從專案內的公開檔案載入 (團隊共享數據)
-                try {
-                    const response = await fetch(GITHUB_CONFIG.publicDataUrl);
-                    if (response.ok) {
-                        const publicData = await response.json();
-                        if (publicData && Array.isArray(publicData) && publicData.length > 0) {
-                            portfolioData = publicData;
-                            // 同步到本地快取
-                            localStorage.setItem('portfolioData', JSON.stringify(publicData));
-                            localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
-                            localStorage.setItem('dataSource', 'public');
-                            showNotification(`📂 已載入 ${publicData.length} 個作品 (團隊共享)`, 'green');
-                            portfolioLoaded = true;
-                        }
+                    if (existingResponse.ok) {
+                        const existingData = await existingResponse.json();
+                        sha = existingData.sha;
                     }
                 } catch (error) {
-                    console.log('公開檔案載入失敗，嘗試其他方式:', error.message);
+                    // 檔案可能不存在，繼續執行
                 }
                 
-                // 2. 如果公開檔案載入失敗，嘗試從本地快取載入
-                if (!portfolioLoaded) {
-                    const stored = localStorage.getItem('portfolioData');
-                    if (stored) {
-                        const localData = JSON.parse(stored);
-                        if (localData && localData.length > 0) {
-                            portfolioData = localData;
-                            const lastUpdate = localStorage.getItem('portfolioLastUpdate');
-                            const updateTime = lastUpdate ? new Date(lastUpdate).toLocaleString('zh-TW') : '未知';
-                            const dataSource = localStorage.getItem('dataSource') || '本地';
-                            showNotification(`💾 已載入 ${localData.length} 個作品 (${dataSource}快取)`, 'blue');
-                            portfolioLoaded = true;
-                        }
-                    }
+                // 準備要上傳的內容 - 修復中文字符編碼問題
+                const jsonString = JSON.stringify(portfolioData, null, 2);
+                // 使用 TextEncoder 和 Uint8Array 來正確處理 UTF-8 編碼
+                const encoder = new TextEncoder();
+                const utf8Bytes = encoder.encode(jsonString);
+                const content = btoa(String.fromCharCode(...utf8Bytes));
+                const commitMessage = `Update portfolio data - ${new Date().toISOString()}`;
+                
+                const requestBody = {
+                    message: commitMessage,
+                    content: content
+                };
+                
+                if (sha) {
+                    requestBody.sha = sha;
                 }
                 
-                // 3. 如果都沒有數據，初始化空白作品集
-                if (!portfolioLoaded) {
-                    portfolioData = [];
-                    showNotification('🎯 準備好新增你的第一個作品了！', 'green');
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.dataFile}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`GitHub API 錯誤: ${response.status} - ${errorData.message}`);
                 }
                 
+                return await response.json();
             } catch (error) {
-                console.error('載入作品集數據失敗:', error);
-                portfolioData = [];
-                showNotification('❌ 載入失敗，將使用空白作品集', 'red');
-            } finally {
-                setLoadingState(false);
-                updatePortfolioCount();
+                console.error('寫入 GitHub 失敗:', error);
+                throw error;
             }
         }
-
-        // Save portfolio data (團隊協作版本 - 只有管理員才能同步到 GitHub)
-        async function savePortfolioData(forceGitHubSync = false) {
-            try {
-                setLoadingState(true);
+    }
+    
+    // GitHub 設置管理類別
+    class GitHubAuth {
+        static currentResolve = null;
+        static currentModal = null;
+        static unlockResolve = null;
+        static unlockModal = null;
+        
+        static async setupEncryption() {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal-content max-w-md">
+                        <div class="p-6 border-b border-gray-200">
+                            <h2 class="text-xl font-bold text-gray-800">🔐 GitHub 同步設置</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p class="text-sm text-blue-800">
+                                    <strong>安全提醒：</strong> 你的 GitHub Token 將使用軍用級 AES-256 加密，
+                                    只有你知道的密碼才能解密。
+                                </p>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">GitHub Token</label>
+                                    <input type="password" id="github-token" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="ghp_xxxxxxxxxxxx 或 github_pat_xxxxx">
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        <a href="https://github.com/settings/tokens" target="_blank" class="text-blue-600 hover:underline">
+                                            → 如何獲取 GitHub Token
+                                        </a>
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">加密密碼</label>
+                                    <input type="password" id="encryption-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="設置一個強密碼">
+                                    <p class="text-xs text-gray-500 mt-1">用於加密你的 GitHub Token，請牢記此密碼</p>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex gap-3">
+                                <button onclick="GitHubAuth.saveEncryptedToken()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                    🔒 加密並保存
+                                </button>
+                                <button onclick="GitHubAuth.skipSetup()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                    跳過
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
                 
-                // 總是先保存到本地快取
-                localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-                localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
-                localStorage.setItem('dataSource', 'local');
-                
-                // 如果強制同步到 GitHub (管理員操作)
-                if (forceGitHubSync) {
-                    try {
-                        // 檢查是否已解鎖 GitHub 權限
-                        if (!GITHUB_CONFIG.sessionUnlocked) {
-                            const token = await GitHubAuth.unlockToken();
-                            if (!token) {
-                                showNotification('❌ 需要管理員權限才能同步到 GitHub', 'red');
-                                return false;
-                            }
-                            GITHUB_CONFIG.sessionUnlocked = true;
-                        }
-                        
-                        // 同步到 GitHub
-                        await GitHubAPI.writeToGitHub(portfolioData);
-                        localStorage.setItem('dataSource', 'github');
-                        showNotification('☁️ 數據已同步到 GitHub！團隊成員將看到更新', 'green');
-                        return true;
-                    } catch (error) {
-                        console.error('GitHub 同步失敗:', error);
-                        showNotification('⚠️ GitHub 同步失敗: ' + error.message, 'orange');
-                        return false;
-                    }
-                } else {
-                    // 不需要強制同步時，只通知本地保存成功
-                    return true;
-                }
-                
-            } catch (error) {
-                console.error('保存數據失敗:', error);
-                showNotification('❌ 保存失敗，請重試', 'red');
-                return false;
-            } finally {
-                setLoadingState(false);
-            }
-        }
-
-        // Set loading state
-        function setLoadingState(loading) {
-            isLoading = loading;
-            const spinners = document.querySelectorAll('.loading-spinner');
-            spinners.forEach(spinner => {
-                spinner.style.display = loading ? 'inline-block' : 'none';
+                GitHubAuth.currentResolve = resolve;
+                GitHubAuth.currentModal = modal;
             });
         }
 
-        // Animate counter
-        function animateCounter(elementId, targetValue) {
-            const element = document.getElementById(elementId);
-            if (!element) return; // 確保元素存在
+        static async saveEncryptedToken() {
+            const token = document.getElementById('github-token').value;
+            const password = document.getElementById('encryption-password').value;
             
-            let current = parseInt(element.textContent) || 0;
-            const increment = (targetValue - current) / 50; // 平滑過渡到目標值
+            if (!token || !password) {
+                showNotification('請填寫完整信息', 'red');
+                return;
+            }
             
-            const timer = setInterval(() => {
-                current += increment;
-                if ((increment > 0 && current >= targetValue) || (increment < 0 && current <= targetValue)) {
-                    current = targetValue;
-                    clearInterval(timer);
-                }
-                element.textContent = Math.floor(current);
-            }, 30);
-        }
-
-        // Update portfolio count
-        function updatePortfolioCount() {
-            const countElement = document.getElementById('count-number');
-            if (countElement) {
-                animateCounter('count-number', portfolioData.length);
+            try {
+                const key = await SimpleEncryption.generateKey(password);
+                const encryptedToken = await SimpleEncryption.encrypt(token, key);
+                
+                localStorage.setItem('encryptedGitHubToken', encryptedToken);
+                localStorage.setItem('githubSyncEnabled', 'true');
+                
+                GITHUB_CONFIG.encryptionKey = key;
+                GITHUB_CONFIG.encryptedToken = encryptedToken;
+                
+                showNotification('🔒 GitHub Token 已安全加密保存！', 'green');
+                GitHubAuth.cleanup(true);
+            } catch (error) {
+                showNotification('加密失敗：' + error.message, 'red');
             }
         }
 
-        // Refresh portfolio data
-        async function refreshPortfolio() {
-            await loadPortfolioData();
-            if (document.getElementById('portfolio-modal').style.display === 'flex') {
-                renderPortfolio();
+        static skipSetup() {
+            localStorage.setItem('githubSyncEnabled', 'false');
+            showNotification('已跳過 GitHub 同步設置', 'orange');
+            GitHubAuth.cleanup(false);
+        }
+
+        static cleanup(success) {
+            if (GitHubAuth.currentModal) {
+                document.body.removeChild(GitHubAuth.currentModal);
+            }
+            if (GitHubAuth.currentResolve) {
+                GitHubAuth.currentResolve(success);
             }
         }
 
-        // Navigation function
-        function navigateToPage(page) {
-            showNotification(`正在導航到 ${getPageName(page)}...`, 'green');
-        }
-
-        // [✅ 已修復] AI selection function - 移除 setTimeout
-        function navigateToAI(aiName) {
-            const path = PATHS.about[aiName];
-            if (path) {
-                // 顯示載入動畫通知
-                const aiLabel = getAIName(aiName);
-                const notification = document.createElement('div');
-                notification.className = 'notification show';
-                notification.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="loading-spinner"></div>
-                        <span class="text-gray-800 font-medium animate-pulse">
-                            正在前往 ${aiLabel} 版本中...
-                        </span>
+        static async unlockToken() {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal-content max-w-md">
+                        <div class="p-6 border-b border-gray-200">
+                            <h2 class="text-xl font-bold text-gray-800">🔓 解鎖 GitHub 同步</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">輸入加密密碼</label>
+                                <input type="password" id="unlock-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="你的加密密碼">
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="GitHubAuth.verifyPassword()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                    🔓 解鎖
+                                </button>
+                                <button onclick="GitHubAuth.cancelUnlock()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                    取消
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
-                document.body.appendChild(notification);
-
-                // 延遲 1.2 秒再開啟新頁面
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        notification.classList.remove('show');
-                        setTimeout(() => document.body.removeChild(notification), 400);
-                    }
-                    window.open(path, '_blank', 'noopener,noreferrer');
-                }, 1200);
-            } else {
-                showNotification(`${getAIName(aiName)} 版本尚未建立`, 'orange');
-            }
+                document.body.appendChild(modal);
+                
+                GitHubAuth.unlockResolve = resolve;
+                GitHubAuth.unlockModal = modal;
+            });
         }
 
-     
-
-
-
-        // Navigate to project folder items
-        function navigateToProject(item) {
-            const path = PATHS.projects[item];
-            if (path) {
-                const itemNames = {
-                    'kabc': '我的個人頁面'
-                };
-                const itemName = itemNames[item] || '專案頁面';
-                showNotification(`正在前往 ${itemName}...`, 'green');
-                window.open(path, '_blank', 'noopener,noreferrer');
-            } else {
-                showNotification(`${item} 頁面尚未建立`, 'orange');
-            }
-        }
-
-        // Show notification
-        function showNotification(message, color = 'green') {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
+        static async verifyPassword() {
+            const password = document.getElementById('unlock-password').value;
+            const encryptedToken = localStorage.getItem('encryptedGitHubToken') || GITHUB_CONFIG.encryptedToken; // 增加對 Secrets 注入的 Token 檢查
             
-            // 根據顏色決定 Tailwind class
-            const bgColorClass = {
-                'green': 'bg-green-500',
-                'blue': 'bg-blue-500',
-                'orange': 'bg-yellow-500',
-                'red': 'bg-red-500'
-            }[color] || 'bg-gray-500';
+            if (!password) {
+                showNotification('請輸入密碼', 'red');
+                return;
+            }
+            if (!encryptedToken) {
+                 showNotification('錯誤：找不到加密 Token，請先設置', 'red');
+                return;
+            }
+            
+            try {
+                const key = await SimpleEncryption.generateKey(password);
+                const token = await SimpleEncryption.decrypt(encryptedToken, key);
+                
+                // 成功解密後，更新全域配置，下次操作可直接使用
+                GITHUB_CONFIG.encryptionKey = key;
+                GITHUB_CONFIG.encryptedToken = encryptedToken;
+                
+                showNotification('🔓 GitHub 同步已解鎖！', 'green');
+                GitHubAuth.cleanupUnlock(token);
+            } catch (error) {
+                showNotification('密碼錯誤，請重試', 'red');
+            }
+        }
 
+        static cancelUnlock() {
+            GitHubAuth.cleanupUnlock(null);
+        }
+
+        static cleanupUnlock(token) {
+            if (GitHubAuth.unlockModal) {
+                document.body.removeChild(GitHubAuth.unlockModal);
+            }
+            if (GitHubAuth.unlockResolve) {
+                GitHubAuth.unlockResolve(token);
+            }
+        }
+
+        static async getDecryptedToken() {
+            // ... (保持不變)
+            if (!GITHUB_CONFIG.encryptionKey && !GITHUB_CONFIG.encryptedToken) {
+                return null;
+            }
+            
+            // 如果已經有金鑰 (代表 Actions 自動解鎖成功或手動解鎖過了)
+            if (GITHUB_CONFIG.encryptionKey && GITHUB_CONFIG.encryptedToken) {
+                 try {
+                    return await SimpleEncryption.decrypt(GITHUB_CONFIG.encryptedToken, GITHUB_CONFIG.encryptionKey);
+                } catch (error) {
+                    // 如果因為某種原因解密失敗，清空金鑰強制重新解鎖
+                    GITHUB_CONFIG.encryptionKey = null;
+                    return null;
+                }
+            }
+            
+            // 如果沒有金鑰，但有加密 Token (代表需要手動解鎖)
+            if (!GITHUB_CONFIG.encryptionKey && GITHUB_CONFIG.encryptedToken) {
+                // 不自動觸發解鎖，而是返回 null，讓上層邏輯決定是否要求密碼
+                return null; 
+            }
+            
+            return null;
+        }
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // 函數定義 (Functions) - 確保在 DOMContentLoaded 之前定義
+    // ------------------------------------------------------------------------------------------------
+
+    // 💡 嘗試自動解鎖 Actions 注入的 Token
+    async function initializeGitHubToken() {
+        // ... (保持不變)
+        if (typeof AUTH_TOKEN_SECRET !== 'undefined' && AUTH_TOKEN_SECRET.length > 10) {
+            
+            // 如果 Actions 注入了 Token 和密碼，則嘗試自動解鎖
+            try {
+                const key = await SimpleEncryption.generateKey(AUTH_PASSWORD_SECRET);
+                GITHUB_CONFIG.encryptionKey = key;
+                GITHUB_CONFIG.encryptedToken = AUTH_TOKEN_SECRET;
+
+                await SimpleEncryption.decrypt(GITHUB_CONFIG.encryptedToken, key);
+                
+                GITHUB_CONFIG.sessionUnlocked = true;
+                localStorage.setItem('githubSyncEnabled', 'true'); 
+                return true;
+            } catch (error) {
+                console.error("Actions Secret 自動解密失敗:", error);
+                GITHUB_CONFIG.encryptedToken = null;
+                GITHUB_CONFIG.encryptionKey = null;
+                localStorage.setItem('githubSyncEnabled', 'false');
+            }
+        }
+        
+        const encryptedToken = localStorage.getItem('encryptedGitHubToken');
+        if (encryptedToken) {
+            GITHUB_CONFIG.encryptedToken = encryptedToken;
+            localStorage.setItem('githubSyncEnabled', 'true');
+        } else {
+             localStorage.setItem('githubSyncEnabled', 'false');
+        }
+        return false;
+    }
+
+    // [✅ GAS 計數器邏輯]
+    async function initializeVisitCounter() {
+        // 💡 替換為您部署好的 GAS Web App URL
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec'; 
+        
+        let currentLocalCount = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
+        animateCounter('visit-counter', currentLocalCount);
+
+        if (!GAS_API_URL || GAS_API_URL === 'YOUR_DEPLOYED_GAS_WEB_APP_URL') {
+            console.warn('GAS API URL 尚未設定，使用本地計數後備。');
+            return;
+        }
+
+        try {
+            const response = await fetch(GAS_API_URL);
+            
+            if (!response.ok) {
+                throw new Error(`GAS response status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.message);
+            }
+
+            const newServerCount = data.value;
+
+            animateCounter('visit-counter', newServerCount);
+            localStorage.setItem('visitCount', newServerCount.toString());
+
+        } catch (error) {
+            console.error('GAS Counter Error (網路或伺服器問題):', error);
+            let newCount = currentLocalCount + 1;
+            localStorage.setItem('visitCount', newCount.toString());
+            animateCounter('visit-counter', newCount);
+        }
+    }
+
+    // Load portfolio data (團隊協作版本 - 優先讀取公開檔案)
+    async function loadPortfolioData() {
+        // ... (保持不變)
+        try {
+            setLoadingState(true);
+            
+            let portfolioLoaded = false;
+            
+            try {
+                const response = await fetch(GITHUB_CONFIG.publicDataUrl);
+                if (response.ok) {
+                    const publicData = await response.json();
+                    if (publicData && Array.isArray(publicData) && publicData.length > 0) {
+                        portfolioData = publicData;
+                        localStorage.setItem('portfolioData', JSON.stringify(publicData));
+                        localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
+                        localStorage.setItem('dataSource', 'public');
+                        showNotification(`📂 已載入 ${publicData.length} 個作品 (團隊共享)`, 'green');
+                        portfolioLoaded = true;
+                    }
+                }
+            } catch (error) {
+                console.log('公開檔案載入失敗，嘗試其他方式:', error.message);
+            }
+            
+            if (!portfolioLoaded) {
+                const stored = localStorage.getItem('portfolioData');
+                if (stored) {
+                    const localData = JSON.parse(stored);
+                    if (localData && localData.length > 0) {
+                        portfolioData = localData;
+                        const lastUpdate = localStorage.getItem('portfolioLastUpdate');
+                        const updateTime = lastUpdate ? new Date(lastUpdate).toLocaleString('zh-TW') : '未知';
+                        const dataSource = localStorage.getItem('dataSource') || '本地';
+                        showNotification(`💾 已載入 ${localData.length} 個作品 (${dataSource}快取)`, 'blue');
+                        portfolioLoaded = true;
+                    }
+                }
+            }
+            
+            if (!portfolioLoaded) {
+                portfolioData = [];
+                showNotification('🎯 準備好新增你的第一個作品了！', 'green');
+            }
+            
+        } catch (error) {
+            console.error('載入作品集數據失敗:', error);
+            portfolioData = [];
+            showNotification('❌ 載入失敗，將使用空白作品集', 'red');
+            throw error;
+        } finally {
+            setLoadingState(false);
+            updatePortfolioCount();
+        }
+    }
+
+    // Save portfolio data (團隊協作版本 - 只有管理員才能同步到 GitHub)
+    async function savePortfolioData(forceGitHubSync = false) {
+        // ... (保持不變)
+        try {
+            setLoadingState(true);
+            
+            // 總是先保存到本地快取
+            localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+            localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
+            localStorage.setItem('dataSource', 'local');
+            
+            // 如果強制同步到 GitHub (管理員操作)
+            if (forceGitHubSync) {
+                // 檢查是否已透過 Secrets 自動解鎖
+                if (AUTH_TOKEN_SECRET && !GITHUB_CONFIG.sessionUnlocked) { // 這裡檢查是否有 Secrets 注入但未解鎖 (因上面 syncToGitHub 已將 sessionUnlocked 設為 false)
+                   // 嘗試再次自動解鎖 (以防第一次失敗)
+                   await initializeGitHubToken();
+                }
+                
+                // 只有當 sessionUnlocked 為 false 時，才會觸發 unlockToken 彈窗。
+                if (!GITHUB_CONFIG.sessionUnlocked) {
+                    // 走手動解鎖流程 (會彈出密碼框)
+                    const token = await GitHubAuth.unlockToken();
+                    if (!token) {
+                        showNotification('❌ 需要管理員權限才能同步到 GitHub', 'red');
+                        return false;
+                    }
+                    GITHUB_CONFIG.sessionUnlocked = true;
+                }
+                
+                try {
+                    // 同步到 GitHub
+                    await GitHubAPI.writeToGitHub(portfolioData);
+                    localStorage.setItem('dataSource', 'github');
+                    showNotification('☁️ 數據已同步到 GitHub！團隊成員將看到更新', 'green');
+                    return true;
+                } catch (error) {
+                    console.error('GitHub 同步失敗:', error);
+                    showNotification('⚠️ GitHub 同步失敗: ' + error.message, 'orange');
+                    return false;
+                }
+            } else {
+                return true;
+            }
+            
+        } catch (error) {
+            console.error('保存數據失敗:', error);
+            showNotification('❌ 保存失敗，請重試', 'red');
+            return false;
+        } finally {
+            setLoadingState(false);
+        }
+    }
+
+    // Check GitHub configuration
+    function checkGitHubConfig() {
+        // ... (保持不變)
+        const isConfigured = GITHUB_CONFIG.username.length > 1 && GITHUB_CONFIG.repo.length > 1; 
+        const dataSource = localStorage.getItem('dataSource') || 'unknown';
+        
+        const notice = document.getElementById('config-notice');
+        if (notice) {
+            if (dataSource === 'public') {
+                notice.innerHTML = `
+                    <strong>🌐 團隊協作模式：</strong> 
+                    正在使用團隊共享的作品集數據，所有成員都能看到最新內容！
+                    <br><small>💡 管理員可以透過 GitHub 同步功能更新共享數據</small>
+                `;
+                notice.style.background = 'linear-gradient(135deg, #d1fae5, #a7f3d0)';
+                notice.style.borderColor = '#10b981';
+                notice.style.color = '#065f46';
+            } else if (dataSource === 'github') {
+                notice.innerHTML = `
+                    <strong>☁️ GitHub 同步模式：</strong> 
+                    數據已同步到 GitHub，團隊成員將在下次重新載入時看到更新！
+                `;
+                notice.style.background = 'linear-gradient(135deg, #dbeafe, #bfdbfe)';
+                notice.style.borderColor = '#3b82f6';
+                notice.style.color = '#1e40af';
+            } else if (isConfigured) {
+                const unlockStatus = GITHUB_CONFIG.sessionUnlocked ? '已自動解鎖 (Secrets)' : '需要手動解鎖';
+                notice.innerHTML = `
+                    <strong>⚙️ 管理員模式：</strong> 
+                    檢測到 GitHub 配置，同步狀態: ${unlockStatus}
+                    <br><small>💡 點擊「GitHub 同步」按鈕來更新團隊共享數據</small>
+                `;
+                notice.style.background = 'linear-gradient(135deg, #fef3c7, #fde68a)';
+                notice.style.borderColor = '#f59e0b';
+                notice.style.color = '#92400e';
+            } else {
+                notice.innerHTML = `
+                    <strong>🔒 本地模式：</strong> 
+                    數據安全保存在本地瀏覽器中，適合個人使用！
+                    <br><small>💡 如需團隊協作，請聯繫管理員設置 GitHub 同步</small>
+                `;
+                notice.style.background = 'linear-gradient(135deg, #f3f4f6, #e5e7eb)';
+                notice.style.borderColor = '#9ca3af';
+                notice.style.color = '#374151';
+            }
+            notice.style.display = 'block';
+        }
+    }
+
+    // Set loading state
+    function setLoadingState(loading) {
+        // ... (保持不變)
+        isLoading = loading;
+        const spinners = document.querySelectorAll('.loading-spinner');
+        spinners.forEach(spinner => {
+            spinner.style.display = loading ? 'inline-block' : 'none';
+        });
+    }
+
+    // Animate counter
+    function animateCounter(elementId, targetValue) {
+        // ... (保持不變)
+        const element = document.getElementById(elementId);
+        if (!element) return; 
+        
+        let current = parseInt(element.textContent) || 0;
+        const increment = (targetValue - current) / 50; 
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if ((increment > 0 && current >= targetValue) || (increment < 0 && current <= targetValue)) {
+                current = targetValue;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 30);
+    }
+
+    // Update portfolio count
+    function updatePortfolioCount() {
+        // ... (保持不變)
+        const countElement = document.getElementById('count-number');
+        if (countElement) {
+            animateCounter('count-number', portfolioData.length);
+        }
+    }
+
+    // Refresh portfolio data
+    async function refreshPortfolio() {
+        // ... (保持不變)
+        await loadPortfolioData();
+        if (document.getElementById('portfolio-modal').style.display === 'flex') {
+            renderPortfolio();
+        }
+    }
+
+    // Navigation function
+    function navigateToPage(page) {
+        // ... (保持不變)
+        showNotification(`正在導航到 ${getPageName(page)}...`, 'green');
+    }
+
+    // [✅ 已修復] AI selection function - 移除 setTimeout
+    function navigateToAI(aiName) {
+        // ... (保持不變)
+        const path = PATHS.about[aiName];
+        if (path) {
+            const aiLabel = getAIName(aiName);
+            const notification = document.createElement('div');
+            notification.className = 'notification show';
             notification.innerHTML = `
-                <div class="flex items-center">
-                    <div class="w-4 h-4 ${bgColorClass} rounded-full mr-3 animate-pulse"></div>
-                    <span class="text-gray-800 font-medium">${message}</span>
+                <div class="flex items-center gap-3">
+                    <div class="loading-spinner"></div>
+                    <span class="text-gray-800 font-medium animate-pulse">
+                        正在前往 ${aiLabel} 版本中...
+                    </span>
                 </div>
             `;
             document.body.appendChild(notification);
-            
-            setTimeout(() => notification.classList.add('show'), 100);
+
             setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 400);
-            }, 3000);
-        }
-
-        // Portfolio functions
-        function showPortfolio() {
-            document.getElementById('portfolio-modal').style.display = 'flex';
-            renderPortfolio();
-        }
-
-        function closePortfolio() {
-            document.getElementById('portfolio-modal').style.display = 'none';
-        }
-
-        function renderPortfolio() {
-            const grid = document.getElementById('portfolio-grid');
-            const empty = document.getElementById('empty-portfolio');
-            
-            if (portfolioData.length === 0) {
-                grid.style.display = 'none';
-                empty.style.display = 'block';
-                return;
-            }
-            
-            grid.style.display = 'grid';
-            empty.style.display = 'none';
-            
-            grid.innerHTML = portfolioData.map(project => `
-                <div class="portfolio-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300 relative">
-                    
-                    <div class="absolute top-4 right-4 flex gap-2 z-10">
-                        <button onclick="showEditProjectForm('${project.id}')" 
-                            class="p-2 rounded-full bg-blue-50 hover:bg-blue-200 text-blue-600 transition-colors duration-200" title="編輯作品">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7-3l2 2m-2-2L14 7m-4 4L19 4"/></svg>
-                        </button>
-                        <button onclick="confirmDelete('${project.id}')" 
-                            class="p-2 rounded-full bg-red-50 hover:bg-red-200 text-red-600 transition-colors duration-200" title="刪除作品">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </div>
-
-                    ${project.image_url ? `<img src="${project.image_url}" alt="${project.title}" class="w-full h-40 object-cover rounded-xl mb-4" onerror="this.style.display='none'">` : ''}
-                    
-                    <h3 class="font-bold text-gray-800 mb-1 text-xl pr-12">${project.title}</h3>
-                    <span class="text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full font-medium inline-block mb-3">${project.category}</span>
-                    
-                    <p class="text-sm text-gray-600 mb-4 leading-relaxed">${project.description}</p>
-                    
-                    <div class="mt-4 text-center">
-                        ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer" 
-                            class="w-full inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
-                            前往查看 Demo →
-                        </a>` : `<span class="text-sm text-gray-500">無 Demo 連結</span>`}
-                    </div>
-                    
-                    ${deleteConfirmId === project.id ? `
-                        <div class="delete-confirm mt-4 z-20">
-                            <div class="flex items-center gap-2 mb-3">
-                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                </svg>
-                                確定要刪除這個作品嗎？
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="deleteProject('${project.id}')" class="text-xs bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium">確定刪除</button>
-                                <button onclick="cancelDelete()" class="text-xs bg-gray-300 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium">取消</button>
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-        }
-
-        // Add project functions
-        function showAddProjectForm() {
-            // 重置為新增模式 (如果之前是編輯模式)
-            document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
-            document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
-            document.getElementById('project-id-to-edit').value = ''; 
-            document.getElementById('add-project-form').reset();
-
-            document.getElementById('add-project-modal').style.display = 'flex';
-        }
-
-        // [✅ 新增] 顯示編輯作品表單
-        function showEditProjectForm(projectId) {
-            const project = portfolioData.find(p => p.id === projectId);
-            if (!project) {
-                showNotification('找不到該作品', 'red');
-                return;
-            }
-            
-            // 設置隱藏的 ID 欄位
-            document.getElementById('project-id-to-edit').value = project.id;
-
-            // 填充表單欄位
-            document.getElementById('project-title').value = project.title;
-            document.getElementById('project-description').value = project.description;
-            document.getElementById('project-category').value = project.category;
-            document.getElementById('project-image').value = project.image_url;
-            document.getElementById('project-demo').value = project.demo_url;
-
-            // 修改彈窗標題
-            document.querySelector('#add-project-modal .modal-content h2').textContent = '編輯作品';
-            document.querySelector('#add-project-form button[type="submit"]').textContent = '保存修改';
-
-            document.getElementById('add-project-modal').style.display = 'flex'; // 顯示表單
-        }
-
-
-        // [✅ 修改] 關閉新增/編輯作品表單
-        function closeAddProjectForm() {
-            // 恢復彈窗標題和按鈕文字
-            document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
-            document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
-            
-            // 清空隱藏的 ID 欄位
-            document.getElementById('project-id-to-edit').value = ''; 
-            
-            document.getElementById('add-project-modal').style.display = 'none';
-            document.getElementById('add-project-form').reset();
-        }
-
-        // [✅ 修改] 處理新增或編輯的表單提交 (替換原有的 addProject 函式)
-        async function handleProjectFormSubmit(event) {
-            event.preventDefault();
-            
-            if (isLoading) return;
-            
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = '保存中...';
-            submitBtn.disabled = true;
-
-            // 檢查是否有要編輯的 ID
-            const editId = document.getElementById('project-id-to-edit').value;
-            const isEditing = !!editId;
-
-            const newOrUpdatedData = {
-                title: document.getElementById('project-title').value,
-                description: document.getElementById('project-description').value,
-                category: document.getElementById('project-category').value,
-                image_url: document.getElementById('project-image').value || '',
-                demo_url: document.getElementById('project-demo').value || '',
-                // created_date 不變
-            };
-            
-            if (isEditing) {
-                // 編輯邏輯：找到舊資料並替換
-                const index = portfolioData.findIndex(p => p.id === editId);
-                if (index !== -1) {
-                    // 保留原始 ID 和 created_date
-                    portfolioData[index] = { 
-                        ...portfolioData[index], 
-                        ...newOrUpdatedData,
-                        updated_date: new Date().toISOString() // 新增更新時間
-                    };
+                if (document.body.contains(notification)) {
+                    notification.classList.remove('show');
+                    setTimeout(() => document.body.removeChild(notification), 400);
                 }
-            } else {
-                // 新增邏輯：推入新資料
-                const newProject = {
-                    id: Date.now().toString(),
+                window.open(path, '_blank', 'noopener,noreferrer');
+            }, 1200);
+        } else {
+            showNotification(`${getAIName(aiName)} 版本尚未建立`, 'orange');
+        }
+    }
+    
+    // Navigate to project folder items
+    function navigateToProject(item) {
+        // ... (保持不變)
+        const path = PATHS.projects[item];
+        if (path) {
+            const itemNames = {
+                'kabc': '我的個人頁面'
+            };
+            const itemName = itemNames[item] || '專案頁面';
+            showNotification(`正在前往 ${itemName}...`, 'green');
+            window.open(path, '_blank', 'noopener,noreferrer');
+        } else {
+            showNotification(`${item} 頁面尚未建立`, 'orange');
+        }
+    }
+
+    // Show notification
+    function showNotification(message, color = 'green') {
+        // ... (保持不變)
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        
+        const bgColorClass = {
+            'green': 'bg-green-500',
+            'blue': 'bg-blue-500',
+            'orange': 'bg-yellow-500',
+            'red': 'bg-red-500'
+        }[color] || 'bg-gray-500';
+
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <div class="w-4 h-4 ${bgColorClass} rounded-full mr-3 animate-pulse"></div>
+                <span class="text-gray-800 font-medium">${message}</span>
+            </div>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => notification.classList.add('show'), 100);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 400);
+        }, 3000);
+    }
+
+    // Portfolio functions
+    function showPortfolio() {
+        // ... (保持不變)
+        document.getElementById('portfolio-modal').style.display = 'flex';
+        renderPortfolio();
+    }
+
+    function closePortfolio() {
+        // ... (保持不變)
+        document.getElementById('portfolio-modal').style.display = 'none';
+    }
+
+    function renderPortfolio() {
+        // ... (保持不變)
+        const grid = document.getElementById('portfolio-grid');
+        const empty = document.getElementById('empty-portfolio');
+        
+        if (portfolioData.length === 0) {
+            grid.style.display = 'none';
+            empty.style.display = 'block';
+            return;
+        }
+        
+        grid.style.display = 'grid';
+        empty.style.display = 'none';
+        
+        grid.innerHTML = portfolioData.map(project => `
+            <div class="portfolio-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300 relative">
+                
+                <div class="absolute top-4 right-4 flex gap-2 z-10">
+                    <button onclick="showEditProjectForm('${project.id}')" 
+                        class="p-2 rounded-full bg-blue-50 hover:bg-blue-200 text-blue-600 transition-colors duration-200" title="編輯作品">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7-3l2 2m-2-2L14 7m-4 4L19 4"/></svg>
+                    </button>
+                    <button onclick="confirmDelete('${project.id}')" 
+                        class="p-2 rounded-full bg-red-50 hover:bg-red-200 text-red-600 transition-colors duration-200" title="刪除作品">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+
+                ${project.image_url ? `<img src="${project.image_url}" alt="${project.title}" class="w-full h-40 object-cover rounded-xl mb-4" onerror="this.style.display='none'">` : ''}
+                
+                <h3 class="font-bold text-gray-800 mb-1 text-xl pr-12">${project.title}</h3>
+                <span class="text-xs bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full font-medium inline-block mb-3">${project.category}</span>
+                
+                <p class="text-sm text-gray-600 mb-4 leading-relaxed">${project.description}</p>
+                
+                <div class="mt-4 text-center">
+                    ${project.demo_url ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer" 
+                        class="w-full inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
+                        前往查看 Demo →
+                    </a>` : `<span class="text-sm text-gray-500">無 Demo 連結</span>`}
+                </div>
+                
+                ${deleteConfirmId === project.id ? `
+                    <div class="delete-confirm mt-4 z-20">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            確定要刪除這個作品嗎？
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="deleteProject('${project.id}')" class="text-xs bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium">確定刪除</button>
+                            <button onclick="cancelDelete()" class="text-xs bg-gray-300 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium">取消</button>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+
+    // Add project functions
+    function showAddProjectForm() {
+        // ... (保持不變)
+        document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
+        document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
+        document.getElementById('project-id-to-edit').value = ''; 
+        document.getElementById('add-project-form').reset();
+
+        document.getElementById('add-project-modal').style.display = 'flex';
+    }
+
+    // [✅ 新增] 顯示編輯作品表單
+    function showEditProjectForm(projectId) {
+        // ... (保持不變)
+        const project = portfolioData.find(p => p.id === projectId);
+        if (!project) {
+            showNotification('找不到該作品', 'red');
+            return;
+        }
+        
+        document.getElementById('project-id-to-edit').value = project.id;
+
+        document.getElementById('project-title').value = project.title;
+        document.getElementById('project-description').value = project.description;
+        document.getElementById('project-category').value = project.category;
+        document.getElementById('project-image').value = project.image_url;
+        document.getElementById('project-demo').value = project.demo_url;
+
+        document.querySelector('#add-project-modal .modal-content h2').textContent = '編輯作品';
+        document.querySelector('#add-project-form button[type="submit"]').textContent = '保存修改';
+
+        document.getElementById('add-project-modal').style.display = 'flex'; 
+    }
+
+
+    // [✅ 修改] 關閉新增/編輯作品表單
+    function closeAddProjectForm() {
+        // ... (保持不變)
+        document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
+        document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
+        
+        document.getElementById('project-id-to-edit').value = ''; 
+        
+        document.getElementById('add-project-modal').style.display = 'none';
+        document.getElementById('add-project-form').reset();
+    }
+
+    // [✅ 修改] 處理新增或編輯的表單提交 (替換原有的 addProject 函式)
+    async function handleProjectFormSubmit(event) {
+        // ... (保持不變)
+        event.preventDefault();
+        
+        if (isLoading) return;
+        
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = '保存中...';
+        submitBtn.disabled = true;
+
+        const editId = document.getElementById('project-id-to-edit').value;
+        const isEditing = !!editId;
+
+        const newOrUpdatedData = {
+            title: document.getElementById('project-title').value,
+            description: document.getElementById('project-description').value,
+            category: document.getElementById('project-category').value,
+            image_url: document.getElementById('project-image').value || '',
+            demo_url: document.getElementById('project-demo').value || '',
+        };
+        
+        if (isEditing) {
+            const index = portfolioData.findIndex(p => p.id === editId);
+            if (index !== -1) {
+                portfolioData[index] = { 
+                    ...portfolioData[index], 
                     ...newOrUpdatedData,
-                    created_date: new Date().toISOString()
+                    updated_date: new Date().toISOString()
                 };
-                portfolioData.push(newProject);
             }
-            
-            const success = await savePortfolioData();
-            updatePortfolioCount();
-            
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-            
-            closeAddProjectForm();
-            
-            if (isEditing) {
-                showNotification(success ? '作品修改並同步成功！' : '作品已修改並保存到本地', success ? 'green' : 'orange');
-            } else {
-                showNotification(success ? '作品新增並同步成功！' : '作品已新增到本地', success ? 'green' : 'orange');
-            }
-
-            // Update portfolio view if it's open
-            if (document.getElementById('portfolio-modal').style.display === 'flex') {
-                renderPortfolio();
-            }
-        }
-
-
-        function confirmDelete(projectId) {
-            deleteConfirmId = projectId;
-            renderPortfolio();
-        }
-
-        function cancelDelete() {
-            deleteConfirmId = null;
-            renderPortfolio();
-        }
-
-        async function deleteProject(projectId) {
-            if (isLoading) return;
-            
-            portfolioData = portfolioData.filter(project => project.id !== projectId);
-            const success = await savePortfolioData();
-            updatePortfolioCount();
-            deleteConfirmId = null;
-            
-            showNotification(success ? '作品已刪除並同步' : '作品已從本地刪除', success ? 'green' : 'orange');
-            renderPortfolio();
-        }
-
-        function getPageName(page) {
-            const pageNames = {
-                'about': '關於我'
+        } else {
+            const newProject = {
+                id: Date.now().toString(),
+                ...newOrUpdatedData,
+                created_date: new Date().toISOString()
             };
-            return pageNames[page] || page;
+            portfolioData.push(newProject);
+        }
+        
+        const success = await savePortfolioData(true); 
+        updatePortfolioCount();
+        
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        closeAddProjectForm();
+        
+        if (isEditing) {
+            showNotification(success ? '作品修改並同步成功！' : '作品已修改並保存到本地', success ? 'green' : 'orange');
+        } else {
+            showNotification(success ? '作品新增並同步成功！' : '作品已新增到本地', success ? 'green' : 'orange');
         }
 
-        function getAIName(aiName) {
-            const aiNames = {
-                'gemini': 'Gemini',
-                'claude': 'Claude',
-                'deepseek': 'DeepSeek',
-                'gpt': 'ChatGPT'
-            };
-            return aiNames[aiName] || aiName;
+        if (document.getElementById('portfolio-modal').style.display === 'flex') {
+            renderPortfolio();
         }
+    }
 
-        // GitHub 設置管理
-        function showGitHubSettings() {
-            const githubEnabled = localStorage.getItem('githubSyncEnabled') === 'true';
-            const hasEncryptedToken = localStorage.getItem('encryptedGitHubToken');
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal-content max-w-lg">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center">
-                            <h2 class="text-2xl font-bold text-gray-800">⚙️ GitHub 同步設置</h2>
-                            <button onclick="closeGitHubSettings()" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
+
+    function confirmDelete(projectId) {
+        // ... (保持不變)
+        deleteConfirmId = projectId;
+        renderPortfolio();
+    }
+
+    function cancelDelete() {
+        // ... (保持不變)
+        deleteConfirmId = null;
+        renderPortfolio();
+    }
+
+    async function deleteProject(projectId) {
+        // ... (保持不變)
+        if (isLoading) return;
+        
+        portfolioData = portfolioData.filter(project => project.id !== projectId);
+        const success = await savePortfolioData(true); 
+        updatePortfolioCount();
+        deleteConfirmId = null;
+        
+        showNotification(success ? '作品已刪除並同步' : '作品已從本地刪除', success ? 'green' : 'orange');
+        renderPortfolio();
+    }
+
+    function getPageName(page) {
+        // ... (保持不變)
+        const pageNames = {
+            'about': '關於我'
+        };
+        return pageNames[page] || page;
+    }
+
+    function getAIName(aiName) {
+        // ... (保持不變)
+        const aiNames = {
+            'gemini': 'Gemini',
+            'claude': 'Claude',
+            'deepseek': 'DeepSeek',
+            'gpt': 'ChatGPT'
+        };
+        return aiNames[aiName] || aiName;
+    }
+
+    function showGitHubSettings() {
+        // ... (保持不變)
+        const githubEnabled = localStorage.getItem('githubSyncEnabled') === 'true';
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content max-w-lg">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-gray-800">⚙️ GitHub 同步設置</h2>
+                        <button onclick="closeGitHubSettings()" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="p-6">
-                        <div class="space-y-6">
-                            <div class="p-4 ${githubEnabled ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'} border rounded-lg">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <div class="w-3 h-3 ${githubEnabled ? 'bg-green-500' : 'bg-gray-400'} rounded-full"></div>
-                                    <span class="font-semibold text-gray-800">
-                                        同步狀態: ${githubEnabled ? '已啟用' : '已停用'}
-                                    </span>
-                                </div>
-                                <p class="text-sm text-gray-600">
-                                    ${githubEnabled ? 
-                                        '✅ GitHub 同步已啟用，數據會自動備份到你的 GitHub 倉庫' : 
-                                        '❌ GitHub 同步已停用，數據只保存在本地瀏覽器中'
-                                    }
-                                </p>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-6">
+                        <div class="p-4 ${githubEnabled ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'} border rounded-lg">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-3 h-3 ${githubEnabled ? 'bg-green-500' : 'bg-gray-400'} rounded-full"></div>
+                                <span class="font-semibold text-gray-800">
+                                    同步狀態: ${githubEnabled ? '已啟用' : '已停用'}
+                                </span>
                             </div>
+                            <p class="text-sm text-gray-600">
+                                ${githubEnabled ? 
+                                    '✅ GitHub 同步已啟用，數據會自動備份到你的 GitHub 倉庫' : 
+                                    '❌ GitHub 同步已停用，數據只保存在本地瀏覽器中'
+                                }
+                            </p>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <h3 class="font-semibold text-gray-800">管理選項</h3>
                             
-                            <div class="space-y-3">
-                                <h3 class="font-semibold text-gray-800">管理選項</h3>
+                            ${!githubEnabled ? `
+                                <button onclick="setupGitHubSync()" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    啟用 GitHub 同步
+                                </button>
+                            ` : `
+                                <button onclick="testGitHubConnection()" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    測試連接
+                                </button>
                                 
-                                ${!githubEnabled ? `
-                                    <button onclick="setupGitHubSync()" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                        </svg>
-                                        啟用 GitHub 同步
-                                    </button>
-                                ` : `
-                                    <button onclick="testGitHubConnection()" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        測試連接
-                                    </button>
-                                    
-                                    <button onclick="changeGitHubPassword()" class="w-full bg-yellow-600 text-white py-3 px-4 rounded-lg hover:bg-yellow-700 transition-colors flex items-center justify-center gap-2">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
-                                        </svg>
-                                        更改加密密碼
-                                    </button>
-                                    
-                                    <button onclick="disableGitHubSync()" class="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
-                                        </svg>
-                                        停用 GitHub 同步
-                                    </button>
-                                `}
-                            </div>
-                            
-                            <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                <h4 class="font-semibold text-blue-800 mb-2">🔒 安全說明</h4>
-                                <ul class="text-sm text-blue-700 space-y-1">
-                                    <li>• GitHub Token 使用 AES-256 軍用級加密</li>
-                                    <li>• 只有你知道的密碼才能解密</li>
-                                    <li>• 數據同時保存在本地和 GitHub</li>
-                                    <li>• 即使 GitHub 同步失敗，本地數據仍安全</li>
-                                </ul>
-                            </div>
+                                <button onclick="changeGitHubPassword()" class="w-full bg-yellow-600 text-white py-3 px-4 rounded-lg hover:bg-yellow-700 transition-colors flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                                    </svg>
+                                    更改加密密碼
+                                </button>
+                                
+                                <button onclick="disableGitHubSync()" class="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                                    </svg>
+                                    停用 GitHub 同步
+                                </button>
+                            `}
+                        </div>
+                        
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 mb-2">🔒 安全說明</h4>
+                            <ul class="text-sm text-blue-700 space-y-1">
+                                <li>• GitHub Token 使用 AES-256 軍用級加密</li>
+                                <li>• 只有你知道的密碼才能解密</li>
+                                <li>• 數據同時保存在本地和 GitHub</li>
+                                <li>• 即使 GitHub 同步失敗，本地數據仍安全</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            `;
-            document.body.appendChild(modal);
-            
-            // 點擊外部關閉
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeGitHubSettings();
-            });
-            
-            window.currentGitHubModal = modal;
-        }
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeGitHubSettings();
+        });
+        
+        window.currentGitHubModal = modal;
+    }
 
-        function closeGitHubSettings() {
-            if (window.currentGitHubModal) {
-                document.body.removeChild(window.currentGitHubModal);
-                window.currentGitHubModal = null;
-            }
+    function closeGitHubSettings() {
+        // ... (保持不變)
+        if (window.currentGitHubModal) {
+            document.body.removeChild(window.currentGitHubModal);
+            window.currentGitHubModal = null;
         }
+    }
 
-        async function setupGitHubSync() {
-            closeGitHubSettings();
-            const success = await GitHubAuth.setupEncryption();
-            if (success) {
-                showNotification('🎉 GitHub 同步已成功設置！', 'green');
-                await loadPortfolioData(); // 重新載入以測試同步
-            }
+    async function setupGitHubSync() {
+        // ... (保持不變)
+        closeGitHubSettings();
+        const success = await GitHubAuth.setupEncryption();
+        if (success) {
+            showNotification('🎉 GitHub 同步已成功設置！', 'green');
+            await loadPortfolioData(); 
         }
+    }
 
-        async function testGitHubConnection() {
-            try {
-                setLoadingState(true);
-                showNotification('🔍 正在測試 GitHub 連接...', 'blue');
-                
-                const data = await GitHubAPI.readFromGitHub();
-                showNotification('✅ GitHub 連接測試成功！', 'green');
-            } catch (error) {
-                showNotification('❌ GitHub 連接測試失敗: ' + error.message, 'red');
-            } finally {
-                setLoadingState(false);
-            }
-        }
-
-        async function changeGitHubPassword() {
-            closeGitHubSettings();
+    async function testGitHubConnection() {
+        // ... (保持不變)
+        try {
+            setLoadingState(true);
+            showNotification('🔍 正在測試 GitHub 連接...', 'blue');
             
-            // 先解鎖當前 token
-            const currentToken = await GitHubAuth.unlockToken();
-            if (!currentToken) {
-                showNotification('❌ 需要先解鎖當前 token', 'red');
-                return;
-            }
-            
-            // 設置新密碼
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal-content max-w-md">
-                    <div class="p-6 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-gray-800">🔑 更改加密密碼</h2>
+            const data = await GitHubAPI.readFromGitHub();
+            showNotification('✅ GitHub 連接測試成功！', 'green');
+        } catch (error) {
+            showNotification('❌ GitHub 連接測試失敗: ' + error.message, 'red');
+        } finally {
+            setLoadingState(false);
+        }
+    }
+
+    async function changeGitHubPassword() {
+        // ... (保持不變)
+        closeGitHubSettings();
+        
+        const currentToken = await GitHubAuth.getDecryptedToken();
+        if (!currentToken) {
+            showNotification('❌ 需要先解鎖當前 token', 'red');
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content max-w-md">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800">🔑 更改加密密碼</h2>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">新的加密密碼</label>
+                        <input type="password" id="new-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="設置新的強密碼">
                     </div>
-                    <div class="p-6">
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">新的加密密碼</label>
-                            <input type="password" id="new-password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="設置新的強密碼">
-                        </div>
-                        <div class="flex gap-3">
-                            <button onclick="saveNewPassword('${currentToken}')" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                                🔒 保存新密碼
-                            </button>
-                            <button onclick="cancelPasswordChange()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                                取消
-                            </button>
-                        </div>
+                    <div class="flex gap-3">
+                        <button onclick="saveNewPassword('${currentToken}')" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                            🔒 保存新密碼
+                        </button>
+                        <button onclick="cancelPasswordChange()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                            取消
+                        </button>
                     </div>
                 </div>
-            `;
-            document.body.appendChild(modal);
-            window.passwordChangeModal = modal;
-        }
+            </div>
+        `;
+        document.body.appendChild(modal);
+        window.passwordChangeModal = modal;
+    }
 
-        async function saveNewPassword(token) {
-            const newPassword = document.getElementById('new-password').value;
-            if (!newPassword) {
-                showNotification('請輸入新密碼', 'red');
-                return;
-            }
-            
-            try {
-                const newKey = await SimpleEncryption.generateKey(newPassword);
-                const newEncryptedToken = await SimpleEncryption.encrypt(token, newKey);
-                
-                localStorage.setItem('encryptedGitHubToken', newEncryptedToken);
-                GITHUB_CONFIG.encryptionKey = newKey;
-                GITHUB_CONFIG.encryptedToken = newEncryptedToken;
-                
-                showNotification('🔑 加密密碼已成功更改！', 'green');
-                cancelPasswordChange();
-            } catch (error) {
-                showNotification('❌ 密碼更改失敗: ' + error.message, 'red');
-            }
+    async function saveNewPassword(token) {
+        // ... (保持不變)
+        const newPassword = document.getElementById('new-password').value;
+        if (!newPassword) {
+            showNotification('請輸入新密碼', 'red');
+            return;
         }
+        
+        try {
+            const newKey = await SimpleEncryption.generateKey(newPassword);
+            const newEncryptedToken = await SimpleEncryption.encrypt(token, newKey);
+            
+            localStorage.setItem('encryptedGitHubToken', newEncryptedToken);
+            GITHUB_CONFIG.encryptionKey = newKey;
+            GITHUB_CONFIG.encryptedToken = newEncryptedToken;
+            
+            showNotification('🔑 加密密碼已成功更改！', 'green');
+            cancelPasswordChange();
+        } catch (error) {
+            showNotification('❌ 密碼更改失敗: ' + error.message, 'red');
+        }
+    }
 
-        function cancelPasswordChange() {
-            if (window.passwordChangeModal) {
-                document.body.removeChild(window.passwordChangeModal);
-                window.passwordChangeModal = null;
-            }
+    function cancelPasswordChange() {
+        // ... (保持不變)
+        if (window.passwordChangeModal) {
+            document.body.removeChild(window.passwordChangeModal);
+            window.passwordChangeModal = null;
         }
+    }
 
-        function disableGitHubSync() {
-            if (confirm('確定要停用 GitHub 同步嗎？這將刪除本地保存的加密 token。')) {
-                localStorage.removeItem('encryptedGitHubToken');
-                localStorage.setItem('githubSyncEnabled', 'false');
-                GITHUB_CONFIG.encryptionKey = null;
-                GITHUB_CONFIG.encryptedToken = null;
-                GITHUB_CONFIG.sessionUnlocked = false;
-                
-                showNotification('🔒 GitHub 同步已停用', 'orange');
-                closeGitHubSettings();
-            }
+    function disableGitHubSync() {
+        // ... (保持不變)
+        if (confirm('確定要停用 GitHub 同步嗎？這將刪除本地保存的加密 token。')) {
+            localStorage.removeItem('encryptedGitHubToken');
+            localStorage.setItem('githubSyncEnabled', 'false');
+            GITHUB_CONFIG.encryptionKey = null;
+            GITHUB_CONFIG.encryptedToken = null;
+            GITHUB_CONFIG.sessionUnlocked = false;
+            
+            showNotification('🔒 GitHub 同步已停用', 'orange');
+            closeGitHubSettings();
         }
+    }
 
-        // 新增 GitHub 同步功能
-        async function syncToGitHub() {
-            const isConfigured = GITHUB_CONFIG.username !== 'your-username' && 
-                                GITHUB_CONFIG.repo !== 'your-repo-name';
-            
-            if (!isConfigured) {
-                showNotification('❌ GitHub 配置未完成，請先在代碼中設置用戶名和倉庫名', 'red');
-                return;
-            }
-            
-            if (portfolioData.length === 0) {
-                showNotification('❌ 沒有數據可以同步', 'orange');
-                return;
-            }
-            
-            const success = await savePortfolioData(true); // 強制同步到 GitHub
-            if (success) {
-                checkGitHubConfig(); // 更新配置狀態顯示
-                if (document.getElementById('portfolio-modal').style.display === 'flex') {
-                    renderPortfolio(); // 更新作品集顯示
-                }
+    // 新增 GitHub 同步功能 (已修改)
+    async function syncToGitHub() {
+        const isConfigured = GITHUB_CONFIG.username.length > 1 && GITHUB_CONFIG.repo.length > 1;
+        
+        if (!isConfigured) {
+            showNotification('❌ GitHub 配置未完成，請先在代碼中設置用戶名和倉庫名', 'red');
+            return;
+        }
+        
+        if (portfolioData.length === 0) {
+            showNotification('❌ 沒有數據可以同步', 'orange');
+            return;
+        }
+        
+        // ------------------------------------------------------------------------------------------------
+        // 【修正邏輯】強制要求手動輸入密碼來確認同步操作 (覆蓋自動解鎖)
+        // ------------------------------------------------------------------------------------------------
+        
+        // 1. 儲存目前的解鎖狀態 (防止同步失敗後，自動解鎖狀態遺失)
+        const wasUnlocked = GITHUB_CONFIG.sessionUnlocked;
+        
+        // 2. 忽略自動解鎖狀態，強制下次檢查時觸發密碼提示。
+        //    這將強制 savePortfolioData 內部的檢查去執行 GitHubAuth.unlockToken()，彈出密碼框。
+        GITHUB_CONFIG.sessionUnlocked = false; 
+        
+        // 3. 呼叫同步邏輯，此時 savePortfolioData 內部會觸發密碼彈窗
+        const success = await savePortfolioData(true); 
+        
+        // 4. 如果同步失敗，且原本是解鎖狀態，則將狀態還原，避免用戶需要再次手動解鎖才能進行其他操作
+        if (!success && wasUnlocked) {
+             GITHUB_CONFIG.sessionUnlocked = true;
+        } else if (success) {
+            // 如果成功，即使原本是 wasUnlocked=false，現在也因為 savePortfolioData 內的 unlockToken 成功，所以 GITHUB_CONFIG.sessionUnlocked 已經是 true 了。
+            GITHUB_CONFIG.sessionUnlocked = true;
+        }
+        // ------------------------------------------------------------------------------------------------
+        
+        if (success) {
+            checkGitHubConfig(); // 更新配置狀態顯示
+            if (document.getElementById('portfolio-modal').style.display === 'flex') {
+                renderPortfolio(); // 更新作品集顯示
             }
         }
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // 🖥️ 程式碼初始化 (Initialization) - 確保在所有定義之後執行
+    // ------------------------------------------------------------------------------------------------
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async function() {
+        // ... (保持不變)
+        await initializeGitHubToken();
+        
+        await loadPortfolioData();
+        initializeVisitCounter(); 
+        checkGitHubConfig();
+        
+        const form = document.getElementById('add-project-form');
+        form.addEventListener('submit', handleProjectFormSubmit);
+        
+        document.getElementById('portfolio-modal').addEventListener('click', function(e) {
+            if (e.target === this) closePortfolio();
+        });
+        
+        document.getElementById('add-project-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeAddProjectForm();
+        });
+    });
     </script>
 </body>
 </html>
