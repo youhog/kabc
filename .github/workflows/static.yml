@@ -1,62 +1,91 @@
-# Simple workflow for deploying static content to GitHub Pages
 name: 網頁更新
 
 on:
-  # 只允許您從 Actions 頁籤手動運行此工作流程
+  repository_dispatch:
+   types: [trigger-static]
   workflow_dispatch:
-
-  # ✅ 當特定檔案有變動時自動觸發
   push:
     branches:
+      - main
       - youzih/dev/*
       - Youzih/dev/*
     paths:
-      - 'data/portfolio-data.json'  # 監聽資料檔變更
-      - '.github/workflows/deploy.yml'  # （可選）若你更新工作流程也重新部署
-      - '.github/workflows/static.yml'
+      - '**'
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: 檢查
         uses: actions/checkout@v4
-      
-      # 1. 注入配置變數 (整合進新 Workflow)
-      - name: 注入配置變數
+
+      # 🔍 Step 1. 設定部署摘要 (移除部署白名單檢查)
+      - name: 設定部署摘要
+        id: check
         run: |
-          # 🚨 警告: 這裡的 sed 命令將會使用您的 Secrets 值替換 index.html 內的佔位符。
-          # ----------------------------------------------------------------------
-          # 替換 GITHUB_CONFIG 內的用戶名和倉庫名 (使用新的 Secret 名稱)
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          echo "目前分支: $BRANCH"
+
+          if [ "$BRANCH" = "main" ]; then
+            SUMMARY="✅ 允許部署：main 分支有變更，無白名單限制。"
+          else
+            SUMMARY="✅ 非 main 分支，自動允許部署。"
+          fi
+
+          # 設置 ALLOW_DEPLOY=true，確保後續步驟始終執行
+          echo "ALLOW_DEPLOY=true" >> $GITHUB_ENV
+          echo "SUMMARY=$SUMMARY" >> $GITHUB_ENV
+
+      # 🛑 Step 2. 移除原有的「停止部署（若不允許）」步驟
+
+      # 🚀 Step 3. 執行部署步驟 (注入配置變數)
+      - name: 注入配置變數
+        if: env.ALLOW_DEPLOY == 'true'
+        run: |
           sed -i "s|'REPO_OWNER_USERNAME_youhog'|'${{ secrets.REPO_OWNER_USERNAME }}'|g" index.html
           sed -i "s|'REPO_NAME_kabc'|'${{ secrets.REPO_NAME }}'|g" index.html
           sed -i "s|// 註解：AUTH_TOKEN_SECRET|const AUTH_TOKEN_SECRET = '${{ secrets.AUTH_TOKEN_SECRET }}';|g" index.html
           sed -i "s|// 註解：AUTH_PASSWORD_SECRET|const AUTH_PASSWORD_SECRET = '${{ secrets.AUTH_PASSWORD_SECRET }}';|g" index.html
-          # ----------------------------------------------------------------------
 
       - name: 設定頁面
+        if: env.ALLOW_DEPLOY == 'true'
         uses: actions/configure-pages@v5
+
       - name: 上傳
+        if: env.ALLOW_DEPLOY == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
-          # 上傳整個儲存庫作為靜態內容
           path: '.'
+
       - name: 更新
+        if: env.ALLOW_DEPLOY == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # 📋 Step 4. 輸出部署摘要
+      - name: Log Summary
+        if: always()
+        run: |
+          echo "=============================="
+          echo "📦 GitHub Pages 部署摘要"
+          echo "=============================="
+          echo "🔹 分支：${GITHUB_REF#refs/heads/}"
+          echo "🔹 狀態：${SUMMARY}"
+          echo "🔹 執行者：${GITHUB_ACTOR}"
+          echo "🔹 Commit 訊息：${GITHUB_EVENT_HEAD_COMMIT_MESSAGE:-N/A}"
+          echo "=============================="
+
+          echo "### 🧾 部署摘要" >> $GITHUB_STEP_SUMMARY
+          echo "- **分支**：${GITHUB_REF#refs/heads/}" >> $GITHUB_STEP_SUMMARY
+          echo "- **狀態**：${SUMMARY}" >> $GITHUB_STEP_SUMMARY
+          echo "- **執行者**：${GITHUB_ACTOR}" >> $GITHUB_STEP_SUMMARY
