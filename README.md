@@ -78,6 +78,14 @@ const PATHS = {
     // ...
 };
 ```
+```js
+function getAIName(aiName) {
+    const aiNames = {
+        // 現有的...
+        '新AI名稱': '顯示名稱'
+    };
+    return aiNames[aiName] || aiName;
+}```
 
 ### 💼 作品集 - 修改指南
 
