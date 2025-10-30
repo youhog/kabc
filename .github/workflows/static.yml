@@ -1,6 +1,8 @@
 name: 網頁更新
 
 on:
+  repository_dispatch:
+   types: [trigger-static]
   workflow_dispatch:
   push:
     branches:
