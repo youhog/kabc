@@ -53,10 +53,10 @@ HTML 結構
 
 | Secret Name (環境變數) | Value (填寫內容) | 來源 | 說明 |
 | :--- | :--- | :--- | :--- |
-| `GITHUB_USERNAME` | 您的 GitHub 用戶名 | 手動填寫 | Actions 將用此覆蓋程式碼中的用戶名。 |
+| `REPO_OWNER_USERNAME` | 您的 GitHub 用戶名 | 手動填寫 | Actions 將用此覆蓋程式碼中的用戶名。 |
 | `REPO_NAME` | 您的倉庫名稱 | 手動填寫 | Actions 將用此覆蓋程式碼中的倉庫名。 |
-| `GITHUB_TOKEN_SECRET` | **加密後的 Token** 字符串 | 來自加密工具的輸出 | 儲存加密密文 (密文 C)。網站運行時解密此值。 |
-| `ENCRYPTION_PASSWORD_SECRET` | **加密時使用的原始密碼** | 來自加密工具的輸出 | 儲存原始密碼 (密碼 A)。用於在網站運行時解密密文 C。**此值為原始文本，無需加密。** |
+| `AUTH_TOKEN_SECRET` | **加密後的 Token** 字符串 | 來自加密工具的輸出 | 儲存加密密文 (密文 C)。網站運行時解密此值。 |
+| `AUTH_PASSWORD_SECRET` | **加密時使用的原始密碼** | 來自加密工具的輸出 | 儲存原始密碼 (密碼 A)。用於在網站運行時解密密文 C。**此值為原始文本，無需加密。** |
 
 **✅ 運行驗證：** 每次運行 GitHub Actions 時，它會自動將這些 Secrets 注入到您的靜態 HTML 中，並由前端程式碼解密，實現安全同步。
 
