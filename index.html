@@ -542,8 +542,8 @@
     // 🔒 GitHub 配置 - 團隊協作版本
     const GITHUB_CONFIG = {
         // 警告：以下 'youhog' 和 'kabc' 會被 GitHub Actions 注入的 Secrets 覆蓋。
-        username: 'youhog',        // 🔧 替換成你的 GitHub 用戶名 (或被 Actions 覆蓋)
-        repo:'kabc',          // 🔧 替換成你的倉庫名稱 (或被 Actions 覆蓋)
+        username: 'REPO_OWNER_USERNAME_youhog',        // 🔧 替換成你的 GitHub 用戶名 (或被 Actions 覆蓋)
+        repo:'REPO_NAME_kabc',          // 🔧 替換成你的倉庫名稱 (或被 Actions 覆蓋)
         dataFile: 'data/portfolio-data.json', // 數據檔案路徑 (建議放在 data 資料夾)
         publicDataUrl: './data/portfolio-data.json', // 公開數據檔案路徑 (用於讀取)
         encryptionKey: null,             // 加密密鑰 (運行時設置)
