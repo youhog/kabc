@@ -10,7 +10,7 @@ on:
       - youzih/dev/*
       - Youzih/dev/*
     paths:
-      - '**'
+      - 'data/portfolio-data.json'  # 監聽資料檔變更
 
 permissions:
   contents: read
