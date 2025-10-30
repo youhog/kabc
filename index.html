@@ -516,13 +516,11 @@
   <script>
 
    // ====================================================================
-    // 📊 Google Analytics 4 (GA4) 追蹤碼初始化 (修復並放在最前面)
+    // 📊 Google Analytics 4 (GA4) 追蹤碼初始化
     // --------------------------------------------------------------------
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
-    // 💡 注意: 這裡已使用載入 URL 中的 ID，請確認 G-YYVEG6B1MS 是您的正確衡量 ID。
     gtag('config', 'G-YYVEG6B1MS'); 
     // ====================================================================
 
@@ -536,7 +534,7 @@
     // 如果要在本機測試 GitHub 同步，請將以下兩行取消註解，並填寫您的 Secrets 值。
     // const AUTH_TOKEN_SECRET = 'YOUR_ENCRYPTED_GITHUB_TOKEN'; // 替換為您加密後的 Token
     // const AUTH_PASSWORD_SECRET = 'YOUR_ENCRYPTION_PASSWORD'; // 替換為您的解密密碼 (原始密碼)
-    const GAS_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL'; // 替換為您部署好的 GAS Web App URL
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec'; // 替換為您部署好的 GAS Web App URL
 
 
     // 🔒 GitHub 配置 - 團隊協作版本
@@ -874,10 +872,14 @@
 
         static async verifyPassword() {
             const password = document.getElementById('unlock-password').value;
-            const encryptedToken = localStorage.getItem('encryptedGitHubToken');
+            const encryptedToken = localStorage.getItem('encryptedGitHubToken') || GITHUB_CONFIG.encryptedToken; // 增加對 Secrets 注入的 Token 檢查
             
             if (!password) {
                 showNotification('請輸入密碼', 'red');
+                return;
+            }
+            if (!encryptedToken) {
+                 showNotification('錯誤：找不到加密 Token，請先設置', 'red');
                 return;
             }
             
@@ -885,6 +887,7 @@
                 const key = await SimpleEncryption.generateKey(password);
                 const token = await SimpleEncryption.decrypt(encryptedToken, key);
                 
+                // 成功解密後，更新全域配置，下次操作可直接使用
                 GITHUB_CONFIG.encryptionKey = key;
                 GITHUB_CONFIG.encryptedToken = encryptedToken;
                 
@@ -909,6 +912,7 @@
         }
 
         static async getDecryptedToken() {
+            // ... (保持不變)
             if (!GITHUB_CONFIG.encryptionKey && !GITHUB_CONFIG.encryptedToken) {
                 return null;
             }
@@ -926,8 +930,8 @@
             
             // 如果沒有金鑰，但有加密 Token (代表需要手動解鎖)
             if (!GITHUB_CONFIG.encryptionKey && GITHUB_CONFIG.encryptedToken) {
-                const token = await GitHubAuth.unlockToken();
-                return token;
+                // 不自動觸發解鎖，而是返回 null，讓上層邏輯決定是否要求密碼
+                return null; 
             }
             
             return null;
@@ -940,32 +944,28 @@
 
     // 💡 嘗試自動解鎖 Actions 注入的 Token
     async function initializeGitHubToken() {
-        // 檢查 Actions 注入的 Token 變數是否存在 (由 GitHub Actions 替換)
+        // ... (保持不變)
         if (typeof AUTH_TOKEN_SECRET !== 'undefined' && AUTH_TOKEN_SECRET.length > 10) {
             
             // 如果 Actions 注入了 Token 和密碼，則嘗試自動解鎖
             try {
-                // 使用 Actions 注入的密碼 (原始文本) 來生成金鑰
                 const key = await SimpleEncryption.generateKey(AUTH_PASSWORD_SECRET);
                 GITHUB_CONFIG.encryptionKey = key;
                 GITHUB_CONFIG.encryptedToken = AUTH_TOKEN_SECRET;
 
-                // 嘗試解密，驗證金鑰是否正確
                 await SimpleEncryption.decrypt(GITHUB_CONFIG.encryptedToken, key);
                 
                 GITHUB_CONFIG.sessionUnlocked = true;
-                localStorage.setItem('githubSyncEnabled', 'true'); // 標記為啟用狀態
+                localStorage.setItem('githubSyncEnabled', 'true'); 
                 return true;
             } catch (error) {
                 console.error("Actions Secret 自動解密失敗:", error);
-                // 如果解密失敗，則必須走手動解鎖流程
                 GITHUB_CONFIG.encryptedToken = null;
                 GITHUB_CONFIG.encryptionKey = null;
                 localStorage.setItem('githubSyncEnabled', 'false');
             }
         }
         
-        // 如果沒有 Secrets 注入，嘗試從 localStorage 載入 (標準流程)
         const encryptedToken = localStorage.getItem('encryptedGitHubToken');
         if (encryptedToken) {
             GITHUB_CONFIG.encryptedToken = encryptedToken;
@@ -979,9 +979,8 @@
     // [✅ GAS 計數器邏輯]
     async function initializeVisitCounter() {
         // 💡 替換為您部署好的 GAS Web App URL
-        const GAS_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL'; 
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyM3nHqxAwGgOJlOvcOyavNw5Tyqo-Y64i6-f17wrp6brJmXSkjkdZijE5d0e-38k3QqQ/exec'; 
         
-        // 1. 先顯示本地快取的數字
         let currentLocalCount = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
         animateCounter('visit-counter', currentLocalCount);
 
@@ -991,7 +990,6 @@
         }
 
         try {
-            // 2. 呼叫 GAS Web App
             const response = await fetch(GAS_API_URL);
             
             if (!response.ok) {
@@ -1006,14 +1004,11 @@
 
             const newServerCount = data.value;
 
-            // 3. 更新計數器為 GAS 回傳的最新數字
             animateCounter('visit-counter', newServerCount);
-            // 4. 將最新數字存回本地快取
             localStorage.setItem('visitCount', newServerCount.toString());
 
         } catch (error) {
             console.error('GAS Counter Error (網路或伺服器問題):', error);
-            // 後備機制：如果 API 失敗，就使用本地快取數字，並+1作為模擬
             let newCount = currentLocalCount + 1;
             localStorage.setItem('visitCount', newCount.toString());
             animateCounter('visit-counter', newCount);
@@ -1022,19 +1017,18 @@
 
     // Load portfolio data (團隊協作版本 - 優先讀取公開檔案)
     async function loadPortfolioData() {
+        // ... (保持不變)
         try {
             setLoadingState(true);
             
             let portfolioLoaded = false;
             
-            // 1. 優先嘗試從專案內的公開檔案載入 (團隊共享數據)
             try {
                 const response = await fetch(GITHUB_CONFIG.publicDataUrl);
                 if (response.ok) {
                     const publicData = await response.json();
                     if (publicData && Array.isArray(publicData) && publicData.length > 0) {
                         portfolioData = publicData;
-                        // 同步到本地快取
                         localStorage.setItem('portfolioData', JSON.stringify(publicData));
                         localStorage.setItem('portfolioLastUpdate', new Date().toISOString());
                         localStorage.setItem('dataSource', 'public');
@@ -1046,7 +1040,6 @@
                 console.log('公開檔案載入失敗，嘗試其他方式:', error.message);
             }
             
-            // 2. 如果公開檔案載入失敗，嘗試從本地快取載入
             if (!portfolioLoaded) {
                 const stored = localStorage.getItem('portfolioData');
                 if (stored) {
@@ -1062,7 +1055,6 @@
                 }
             }
             
-            // 3. 如果都沒有數據，初始化空白作品集
             if (!portfolioLoaded) {
                 portfolioData = [];
                 showNotification('🎯 準備好新增你的第一個作品了！', 'green');
@@ -1081,6 +1073,7 @@
 
     // Save portfolio data (團隊協作版本 - 只有管理員才能同步到 GitHub)
     async function savePortfolioData(forceGitHubSync = false) {
+        // ... (保持不變)
         try {
             setLoadingState(true);
             
@@ -1092,13 +1085,14 @@
             // 如果強制同步到 GitHub (管理員操作)
             if (forceGitHubSync) {
                 // 檢查是否已透過 Secrets 自動解鎖
-                if (!GITHUB_CONFIG.sessionUnlocked) {
+                if (AUTH_TOKEN_SECRET && !GITHUB_CONFIG.sessionUnlocked) { // 這裡檢查是否有 Secrets 注入但未解鎖 (因上面 syncToGitHub 已將 sessionUnlocked 設為 false)
                    // 嘗試再次自動解鎖 (以防第一次失敗)
                    await initializeGitHubToken();
                 }
                 
+                // 只有當 sessionUnlocked 為 false 時，才會觸發 unlockToken 彈窗。
                 if (!GITHUB_CONFIG.sessionUnlocked) {
-                    // 走手動解鎖流程
+                    // 走手動解鎖流程 (會彈出密碼框)
                     const token = await GitHubAuth.unlockToken();
                     if (!token) {
                         showNotification('❌ 需要管理員權限才能同步到 GitHub', 'red');
@@ -1119,7 +1113,6 @@
                     return false;
                 }
             } else {
-                // 不需要強制同步時，只通知本地保存成功
                 return true;
             }
             
@@ -1134,7 +1127,7 @@
 
     // Check GitHub configuration
     function checkGitHubConfig() {
-        // 這裡 'youhog' 和 'kabc' 應該已被 Actions Secrets 替換
+        // ... (保持不變)
         const isConfigured = GITHUB_CONFIG.username.length > 1 && GITHUB_CONFIG.repo.length > 1; 
         const dataSource = localStorage.getItem('dataSource') || 'unknown';
         
@@ -1158,7 +1151,6 @@
                 notice.style.borderColor = '#3b82f6';
                 notice.style.color = '#1e40af';
             } else if (isConfigured) {
-                // 檢查是否已透過 Secrets 自動解鎖
                 const unlockStatus = GITHUB_CONFIG.sessionUnlocked ? '已自動解鎖 (Secrets)' : '需要手動解鎖';
                 notice.innerHTML = `
                     <strong>⚙️ 管理員模式：</strong> 
@@ -1184,6 +1176,7 @@
 
     // Set loading state
     function setLoadingState(loading) {
+        // ... (保持不變)
         isLoading = loading;
         const spinners = document.querySelectorAll('.loading-spinner');
         spinners.forEach(spinner => {
@@ -1193,11 +1186,12 @@
 
     // Animate counter
     function animateCounter(elementId, targetValue) {
+        // ... (保持不變)
         const element = document.getElementById(elementId);
-        if (!element) return; // 確保元素存在
+        if (!element) return; 
         
         let current = parseInt(element.textContent) || 0;
-        const increment = (targetValue - current) / 50; // 平滑過渡到目標值
+        const increment = (targetValue - current) / 50; 
         
         const timer = setInterval(() => {
             current += increment;
@@ -1211,6 +1205,7 @@
 
     // Update portfolio count
     function updatePortfolioCount() {
+        // ... (保持不變)
         const countElement = document.getElementById('count-number');
         if (countElement) {
             animateCounter('count-number', portfolioData.length);
@@ -1219,6 +1214,7 @@
 
     // Refresh portfolio data
     async function refreshPortfolio() {
+        // ... (保持不變)
         await loadPortfolioData();
         if (document.getElementById('portfolio-modal').style.display === 'flex') {
             renderPortfolio();
@@ -1227,14 +1223,15 @@
 
     // Navigation function
     function navigateToPage(page) {
+        // ... (保持不變)
         showNotification(`正在導航到 ${getPageName(page)}...`, 'green');
     }
 
     // [✅ 已修復] AI selection function - 移除 setTimeout
     function navigateToAI(aiName) {
+        // ... (保持不變)
         const path = PATHS.about[aiName];
         if (path) {
-            // 顯示載入動畫通知
             const aiLabel = getAIName(aiName);
             const notification = document.createElement('div');
             notification.className = 'notification show';
@@ -1248,7 +1245,6 @@
             `;
             document.body.appendChild(notification);
 
-            // 延遲 1.2 秒再開啟新頁面
             setTimeout(() => {
                 if (document.body.contains(notification)) {
                     notification.classList.remove('show');
@@ -1263,6 +1259,7 @@
     
     // Navigate to project folder items
     function navigateToProject(item) {
+        // ... (保持不變)
         const path = PATHS.projects[item];
         if (path) {
             const itemNames = {
@@ -1278,10 +1275,10 @@
 
     // Show notification
     function showNotification(message, color = 'green') {
+        // ... (保持不變)
         const notification = document.createElement('div');
         notification.className = 'notification';
         
-        // 根據顏色決定 Tailwind class
         const bgColorClass = {
             'green': 'bg-green-500',
             'blue': 'bg-blue-500',
@@ -1310,15 +1307,18 @@
 
     // Portfolio functions
     function showPortfolio() {
+        // ... (保持不變)
         document.getElementById('portfolio-modal').style.display = 'flex';
         renderPortfolio();
     }
 
     function closePortfolio() {
+        // ... (保持不變)
         document.getElementById('portfolio-modal').style.display = 'none';
     }
 
     function renderPortfolio() {
+        // ... (保持不變)
         const grid = document.getElementById('portfolio-grid');
         const empty = document.getElementById('empty-portfolio');
         
@@ -1379,7 +1379,7 @@
 
     // Add project functions
     function showAddProjectForm() {
-        // 重置為新增模式 (如果之前是編輯模式)
+        // ... (保持不變)
         document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
         document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
         document.getElementById('project-id-to-edit').value = ''; 
@@ -1390,37 +1390,34 @@
 
     // [✅ 新增] 顯示編輯作品表單
     function showEditProjectForm(projectId) {
+        // ... (保持不變)
         const project = portfolioData.find(p => p.id === projectId);
         if (!project) {
             showNotification('找不到該作品', 'red');
             return;
         }
         
-        // 設置隱藏的 ID 欄位
         document.getElementById('project-id-to-edit').value = project.id;
 
-        // 填充表單欄位
         document.getElementById('project-title').value = project.title;
         document.getElementById('project-description').value = project.description;
         document.getElementById('project-category').value = project.category;
         document.getElementById('project-image').value = project.image_url;
         document.getElementById('project-demo').value = project.demo_url;
 
-        // 修改彈窗標題
         document.querySelector('#add-project-modal .modal-content h2').textContent = '編輯作品';
         document.querySelector('#add-project-form button[type="submit"]').textContent = '保存修改';
 
-        document.getElementById('add-project-modal').style.display = 'flex'; // 顯示表單
+        document.getElementById('add-project-modal').style.display = 'flex'; 
     }
 
 
     // [✅ 修改] 關閉新增/編輯作品表單
     function closeAddProjectForm() {
-        // 恢復彈窗標題和按鈕文字
+        // ... (保持不變)
         document.querySelector('#add-project-modal .modal-content h2').textContent = '新增作品';
         document.querySelector('#add-project-form button[type="submit"]').textContent = '新增作品';
         
-        // 清空隱藏的 ID 欄位
         document.getElementById('project-id-to-edit').value = ''; 
         
         document.getElementById('add-project-modal').style.display = 'none';
@@ -1429,6 +1426,7 @@
 
     // [✅ 修改] 處理新增或編輯的表單提交 (替換原有的 addProject 函式)
     async function handleProjectFormSubmit(event) {
+        // ... (保持不變)
         event.preventDefault();
         
         if (isLoading) return;
@@ -1438,7 +1436,6 @@
         submitBtn.textContent = '保存中...';
         submitBtn.disabled = true;
 
-        // 檢查是否有要編輯的 ID
         const editId = document.getElementById('project-id-to-edit').value;
         const isEditing = !!editId;
 
@@ -1448,22 +1445,18 @@
             category: document.getElementById('project-category').value,
             image_url: document.getElementById('project-image').value || '',
             demo_url: document.getElementById('project-demo').value || '',
-            // created_date 不變
         };
         
         if (isEditing) {
-            // 編輯邏輯：找到舊資料並替換
             const index = portfolioData.findIndex(p => p.id === editId);
             if (index !== -1) {
-                // 保留原始 ID 和 created_date
                 portfolioData[index] = { 
                     ...portfolioData[index], 
                     ...newOrUpdatedData,
-                    updated_date: new Date().toISOString() // 新增更新時間
+                    updated_date: new Date().toISOString()
                 };
             }
         } else {
-            // 新增邏輯：推入新資料
             const newProject = {
                 id: Date.now().toString(),
                 ...newOrUpdatedData,
@@ -1472,7 +1465,7 @@
             portfolioData.push(newProject);
         }
         
-        const success = await savePortfolioData(true); // 總是嘗試同步到 GitHub
+        const success = await savePortfolioData(true); 
         updatePortfolioCount();
         
         submitBtn.textContent = originalText;
@@ -1486,7 +1479,6 @@
             showNotification(success ? '作品新增並同步成功！' : '作品已新增到本地', success ? 'green' : 'orange');
         }
 
-        // Update portfolio view if it's open
         if (document.getElementById('portfolio-modal').style.display === 'flex') {
             renderPortfolio();
         }
@@ -1494,20 +1486,23 @@
 
 
     function confirmDelete(projectId) {
+        // ... (保持不變)
         deleteConfirmId = projectId;
         renderPortfolio();
     }
 
     function cancelDelete() {
+        // ... (保持不變)
         deleteConfirmId = null;
         renderPortfolio();
     }
 
     async function deleteProject(projectId) {
+        // ... (保持不變)
         if (isLoading) return;
         
         portfolioData = portfolioData.filter(project => project.id !== projectId);
-        const success = await savePortfolioData(true); // 總是嘗試同步到 GitHub
+        const success = await savePortfolioData(true); 
         updatePortfolioCount();
         deleteConfirmId = null;
         
@@ -1516,6 +1511,7 @@
     }
 
     function getPageName(page) {
+        // ... (保持不變)
         const pageNames = {
             'about': '關於我'
         };
@@ -1523,6 +1519,7 @@
     }
 
     function getAIName(aiName) {
+        // ... (保持不變)
         const aiNames = {
             'gemini': 'Gemini',
             'claude': 'Claude',
@@ -1533,6 +1530,7 @@
     }
 
     function showGitHubSettings() {
+        // ... (保持不變)
         const githubEnabled = localStorage.getItem('githubSyncEnabled') === 'true';
         
         const modal = document.createElement('div');
@@ -1615,7 +1613,6 @@
         `;
         document.body.appendChild(modal);
         
-        // 點擊外部關閉
         modal.addEventListener('click', function(e) {
             if (e.target === modal) closeGitHubSettings();
         });
@@ -1624,6 +1621,7 @@
     }
 
     function closeGitHubSettings() {
+        // ... (保持不變)
         if (window.currentGitHubModal) {
             document.body.removeChild(window.currentGitHubModal);
             window.currentGitHubModal = null;
@@ -1631,15 +1629,17 @@
     }
 
     async function setupGitHubSync() {
+        // ... (保持不變)
         closeGitHubSettings();
         const success = await GitHubAuth.setupEncryption();
         if (success) {
             showNotification('🎉 GitHub 同步已成功設置！', 'green');
-            await loadPortfolioData(); // 重新載入以測試同步
+            await loadPortfolioData(); 
         }
     }
 
     async function testGitHubConnection() {
+        // ... (保持不變)
         try {
             setLoadingState(true);
             showNotification('🔍 正在測試 GitHub 連接...', 'blue');
@@ -1654,16 +1654,15 @@
     }
 
     async function changeGitHubPassword() {
+        // ... (保持不變)
         closeGitHubSettings();
         
-        // 先解鎖當前 token
         const currentToken = await GitHubAuth.getDecryptedToken();
         if (!currentToken) {
             showNotification('❌ 需要先解鎖當前 token', 'red');
             return;
         }
         
-        // 設置新密碼
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
@@ -1692,6 +1691,7 @@
     }
 
     async function saveNewPassword(token) {
+        // ... (保持不變)
         const newPassword = document.getElementById('new-password').value;
         if (!newPassword) {
             showNotification('請輸入新密碼', 'red');
@@ -1699,7 +1699,6 @@
         }
         
         try {
-            // 這裡會將新的密碼和原始的 token 加密後存回 localStorage
             const newKey = await SimpleEncryption.generateKey(newPassword);
             const newEncryptedToken = await SimpleEncryption.encrypt(token, newKey);
             
@@ -1715,6 +1714,7 @@
     }
 
     function cancelPasswordChange() {
+        // ... (保持不變)
         if (window.passwordChangeModal) {
             document.body.removeChild(window.passwordChangeModal);
             window.passwordChangeModal = null;
@@ -1722,6 +1722,7 @@
     }
 
     function disableGitHubSync() {
+        // ... (保持不變)
         if (confirm('確定要停用 GitHub 同步嗎？這將刪除本地保存的加密 token。')) {
             localStorage.removeItem('encryptedGitHubToken');
             localStorage.setItem('githubSyncEnabled', 'false');
@@ -1734,7 +1735,7 @@
         }
     }
 
-    // 新增 GitHub 同步功能
+    // 新增 GitHub 同步功能 (已修改)
     async function syncToGitHub() {
         const isConfigured = GITHUB_CONFIG.username.length > 1 && GITHUB_CONFIG.repo.length > 1;
         
@@ -1748,7 +1749,29 @@
             return;
         }
         
-        const success = await savePortfolioData(true); // 總是嘗試同步到 GitHub
+        // ------------------------------------------------------------------------------------------------
+        // 【修正邏輯】強制要求手動輸入密碼來確認同步操作 (覆蓋自動解鎖)
+        // ------------------------------------------------------------------------------------------------
+        
+        // 1. 儲存目前的解鎖狀態 (防止同步失敗後，自動解鎖狀態遺失)
+        const wasUnlocked = GITHUB_CONFIG.sessionUnlocked;
+        
+        // 2. 忽略自動解鎖狀態，強制下次檢查時觸發密碼提示。
+        //    這將強制 savePortfolioData 內部的檢查去執行 GitHubAuth.unlockToken()，彈出密碼框。
+        GITHUB_CONFIG.sessionUnlocked = false; 
+        
+        // 3. 呼叫同步邏輯，此時 savePortfolioData 內部會觸發密碼彈窗
+        const success = await savePortfolioData(true); 
+        
+        // 4. 如果同步失敗，且原本是解鎖狀態，則將狀態還原，避免用戶需要再次手動解鎖才能進行其他操作
+        if (!success && wasUnlocked) {
+             GITHUB_CONFIG.sessionUnlocked = true;
+        } else if (success) {
+            // 如果成功，即使原本是 wasUnlocked=false，現在也因為 savePortfolioData 內的 unlockToken 成功，所以 GITHUB_CONFIG.sessionUnlocked 已經是 true 了。
+            GITHUB_CONFIG.sessionUnlocked = true;
+        }
+        // ------------------------------------------------------------------------------------------------
+        
         if (success) {
             checkGitHubConfig(); // 更新配置狀態顯示
             if (document.getElementById('portfolio-modal').style.display === 'flex') {
@@ -1763,19 +1786,16 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', async function() {
-        // 💡 嘗試自動解鎖 Actions 注入的 Token
+        // ... (保持不變)
         await initializeGitHubToken();
         
-        // 呼叫所有初始化函數
         await loadPortfolioData();
         initializeVisitCounter(); 
         checkGitHubConfig();
         
-        // Add form event listener
         const form = document.getElementById('add-project-form');
         form.addEventListener('submit', handleProjectFormSubmit);
         
-        // Close modals on outside click
         document.getElementById('portfolio-modal').addEventListener('click', function(e) {
             if (e.target === this) closePortfolio();
         });
