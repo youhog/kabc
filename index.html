@@ -529,13 +529,13 @@
     // 🚨 GitHub Actions 環境變數注入點 (Secrets)
     // 部署時，GitHub Actions 將會透過 sed 替換以下註解行，注入實際的 Secrets 值。
 
-    // 註解：GITHUB_TOKEN_SECRET  <-- 此行會被替換 (請填寫密文)
-    // 註解：ENCRYPTION_PASSWORD_SECRET <-- 此行會被替換 (請填寫原始密碼)
+    // 註解：AUTH_TOKEN_SECRET  <-- 此行會被替換 (請填寫密文)
+    // 註解：AUTH_PASSWORD_SECRET <-- 此行會被替換 (請填寫原始密碼)
     
     // 💡 本地測試專用變數：請將下方 GAS_API_URL 替換為您部署好的 Web App URL。
     // 如果要在本機測試 GitHub 同步，請將以下兩行取消註解，並填寫您的 Secrets 值。
-    // const GITHUB_TOKEN_SECRET = 'YOUR_ENCRYPTED_GITHUB_TOKEN'; // 替換為您加密後的 Token
-    // const ENCRYPTION_PASSWORD_SECRET = 'YOUR_ENCRYPTION_PASSWORD'; // 替換為您的解密密碼 (原始密碼)
+    // const AUTH_TOKEN_SECRET = 'YOUR_ENCRYPTED_GITHUB_TOKEN'; // 替換為您加密後的 Token
+    // const AUTH_PASSWORD_SECRET = 'YOUR_ENCRYPTION_PASSWORD'; // 替換為您的解密密碼 (原始密碼)
     const GAS_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL'; // 替換為您部署好的 GAS Web App URL
 
 
@@ -554,14 +554,14 @@
     // 💡 新增：將 Actions Secrets 載入到 GITHUB_CONFIG 中，使其無需解鎖即可同步。
     async function initializeGitHubToken() {
         // 檢查 Actions 注入的 Token 變數是否存在 (由 GitHub Actions 替換)
-        if (typeof GITHUB_TOKEN_SECRET !== 'undefined' && GITHUB_TOKEN_SECRET.length > 10) {
+        if (typeof AUTH_TOKEN_SECRET !== 'undefined' && AUTH_TOKEN_SECRET.length > 10) {
             
             // 如果 Actions 注入了 Token 和密碼，則嘗試自動解鎖
             try {
                 // 使用 Actions 注入的密碼 (原始文本) 來生成金鑰
-                const key = await SimpleEncryption.generateKey(ENCRYPTION_PASSWORD_SECRET);
+                const key = await SimpleEncryption.generateKey(AUTH_PASSWORD_SECRET);
                 GITHUB_CONFIG.encryptionKey = key;
-                GITHUB_CONFIG.encryptedToken = GITHUB_TOKEN_SECRET;
+                GITHUB_CONFIG.encryptedToken = AUTH_TOKEN_SECRET;
 
                 // 嘗試解密，驗證金鑰是否正確
                 await SimpleEncryption.decrypt(GITHUB_CONFIG.encryptedToken, key);
@@ -1773,7 +1773,6 @@
                 }
             }
         }
-    }
     </script>
 </body>
 </html>
