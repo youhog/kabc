@@ -961,7 +961,6 @@
 
     // [✅ GAS 計數器邏輯]
     async function initializeVisitCounter() {
-        const GAS_API_URL = 'YOUR_DEPLOYED_GAS_WEB_APP_URL'; 
         
         let currentLocalCount = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
         animateCounter('visit-counter', currentLocalCount);
